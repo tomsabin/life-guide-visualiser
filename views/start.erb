@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html>
   <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
     <input type="file" id="file" name="file" enctype="multipart/form-data" />
+    <div id="result"></div>
   </body>
   <script type="text/javascript">
+    //event listener to upload button... for intervention structure
     document.getElementById('file').addEventListener('change', readFile, false);
 
     function readFile (evt) {
@@ -11,9 +14,16 @@
        var file = files[0];           
        var reader = new FileReader();
        reader.onload = function() {
-         console.log(this.result);            
+         processStructure(this.result);            
        }
        reader.readAsText(file)
+    }
+    
+    function processStructure(input) {
+      $.post('dataUpload', input, function(data) {
+        //returned data:
+        console.log(data);
+      });
     }
   </script>
 </html>
