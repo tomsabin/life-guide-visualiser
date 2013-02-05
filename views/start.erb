@@ -1,29 +1,101 @@
 <!DOCTYPE html>
 <html>
-  <body>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-    <input type="file" id="file" name="file" enctype="multipart/form-data" />
-    <div id="result"></div>
-  </body>
-  <script type="text/javascript">
-    //event listener to upload button... for intervention structure
-    document.getElementById('file').addEventListener('change', readFile, false);
-
-    function readFile (evt) {
-       var files = evt.target.files;
-       var file = files[0];           
-       var reader = new FileReader();
-       reader.onload = function() {
-         processStructure(this.result);            
-       }
-       reader.readAsText(file)
-    }
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Proj..</title>
+    <script src="d3.v3.min.js"></script>
+    <script src="jquery.min.js"></script>
     
-    function processStructure(input) {
-      $.post('dataUpload', input, function(data) {
-        //returned data:
-        console.log(data);
-      });
+    <style type="text/css">
+    .node {
+      stroke: #fff;
+      stroke-width: 1.5px;
     }
+
+    .link {
+      stroke: #999;
+      stroke-opacity: .6;
+    }
+    </style>
+    
+  </head>
+  <body>
+    <input type="file" id="file" name="file" enctype="multipart/form-data" />
+  </body>
+  
+  <script type="text/javascript">
+  //script to send structure text file
+  document.getElementById('file').addEventListener('change', readFile, false);
+
+  function readFile (evt) {
+    var files = evt.target.files;
+    var file = files[0];           
+    var reader = new FileReader();
+    reader.onload = function() {
+      post(this.result);            
+    }
+    reader.readAsText(file)
+  }
+  
+  function post(input) {
+    $.post('dataUpload', input, function(data) {
+      drawGraph(JSON.parse(data)); //create graph from returned structured data
+    });
+  }
+  </script>
+  
+  <script type="text/javascript">
+  //http://bl.ocks.org/4062045
+  var width = 960,
+      height = 500;
+
+  var color = d3.scale.category20();
+
+  var force = d3.layout.force()
+      .charge(-120)
+      .linkDistance(30)
+      .size([width, height]);
+
+  var svg = d3.select("body").append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+  function drawGraph(input) {
+    var graph = input;
+    console.log(graph);
+    // d3.json("miserables.json", function(error, graph) {
+      force
+          .nodes(graph.nodes)
+          .links(graph.links)
+          .start();
+
+      var link = svg.selectAll(".link")
+          .data(graph.links)
+        .enter().append("line")
+          .attr("class", "link")
+          .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+      var node = svg.selectAll(".node")
+          .data(graph.nodes)
+        .enter().append("circle")
+          .attr("class", "node")
+          .attr("r", 5)
+          .style("fill", function(d) { return color(d.group); })
+          .call(force.drag);
+
+      node.append("title")
+          .text(function(d) { return d.name; });
+
+      force.on("tick", function() {
+        link.attr("x1", function(d) { return d.source.x; })
+            .attr("y1", function(d) { return d.source.y; })
+            .attr("x2", function(d) { return d.target.x; })
+            .attr("y2", function(d) { return d.target.y; });
+
+        node.attr("cx", function(d) { return d.x; })
+            .attr("cy", function(d) { return d.y; });
+      });
+    // });
+  }
   </script>
 </html>
