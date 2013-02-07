@@ -1,0 +1,63 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body { 
+  background: white;
+  font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 14px;
+  color: #222222;
+}
+
+#graph-container {
+  width: 768px;
+  background-color: gray;
+}
+
+#graph {
+  margin: 0 auto;
+  width: 768px;
+  height: 500px;
+  background-color: white;
+}
+
+#file-upload {
+  position: absolute;
+  top: 50%;  left: 50%; /*adjusted in JS*/
+  width: 250px;
+  height: 250px;
+  background-color: rgb(76, 179, 218);
+}
+
+#sidebar-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150px;
+  background-color: black;
+}
+
+#layers {
+  overflow: auto;
+  list-style-type: none;
+}
+
+li {
+  width: 150px;
+  height: 150px;
+  background-color: black;
+  color: white;
+}
+
+li:hover {
+  background-color: rgb(76, 179, 218);
+  color: white;
+  cursor: pointer;
+}
+
+.selected {
+  background-color: rgb(76, 179, 218);
+}

@@ -3,6 +3,7 @@
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <title>Proj..</title>
+    <link rel="stylesheet" type="text/css" href="stylesheet.css">
     <script src="d3.v3.min.js"></script>
     <script src="jquery.min.js"></script>
     
@@ -17,14 +18,51 @@
       stroke-opacity: .6;
     }
     </style>
-    
   </head>
   <body>
-    <input type="file" id="file" name="file" enctype="multipart/form-data" />
+    <div id="file-upload">
+      <input type="file" id="file" name="file" enctype="multipart/form-data" />
+    </div>
+    <div id="graph-container">
+      <div id="graph"></div>
+    </div>
+    <div id="sidebar-container">
+      <ul id="layers">
+        <li>Label1</li>
+        <li>Label2</li>
+        <li>Label3</li>
+        <li>Label4</li>
+        <li>Label5</li>
+        <li>Label6</li>
+        <li>Label7</li>
+        <li>Label8</li>
+        <li>Label9</li>
+      </ul>
+    </div>
   </body>
+  <script type="text/javascript">
+  //styling JS
+  var graphWidth =$(window).width()-150;
+  var graphHeight =$(window).height()-20;
+  $("#sidebar-container").height($(window).height());
+  $("#layers").height($(window).height());
+  $("#file-upload").css("top", $(window).height()/2-100);
+  $("#file-upload").css("left", $(window).width()/2-200);
+  $("#graph-container").width(graphWidth);
+  $("#graph").width(graphWidth);
+  $("#graph").height(graphHeight);
+  
+  $("li").click(function() {
+    if ($(this).hasClass("selected")) {
+      $(this).removeClass("selected");
+    } else {
+      $(this).addClass("selected");
+    }
+  });
+  </script>
   
   <script type="text/javascript">
-  //script to send structure text file
+  //Code to read files and ajax post to server
   document.getElementById('file').addEventListener('change', readFile, false);
 
   function readFile (evt) {
@@ -38,16 +76,21 @@
   }
   
   function post(input) {
+    $("#file-upload").hide();
     $.post('dataUpload', input, function(data) {
-      drawGraph(JSON.parse(data)); //create graph from returned structured data
+      drawGraph(JSON.parse(data));
     });
   }
   </script>
   
   <script type="text/javascript">
+  //Code to produce tree
   //http://bl.ocks.org/4062045
-  var width = 960,
-      height = 500;
+  var width = graphWidth,
+      height = graphHeight;
+      
+  // var width = 768,
+  //     height = 500;
 
   var color = d3.scale.category20();
 
@@ -56,7 +99,7 @@
       .linkDistance(30)
       .size([width, height]);
 
-  var svg = d3.select("body").append("svg")
+  var svg = d3.select("#graph").append("svg")
       .attr("width", width)
       .attr("height", height);
 
