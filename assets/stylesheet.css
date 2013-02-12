@@ -24,6 +24,15 @@ body {
   background-color: white;
 }
 
+#graph-tooltip {
+  position: absolute;
+  top:0;
+  left:0;
+  padding: 3px 5px;
+  background-color: rgb(76, 179, 218);
+  color: white;
+}
+
 #file-upload {
   position: absolute;
   top: 50%;  left: 50%; /*adjusted in JS*/
@@ -36,18 +45,20 @@ body {
   position: absolute;
   top: 0;
   right: 0;
-  width: 150px;
+  width: 165px;
   background-color: black;
 }
 
 #layers {
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   list-style-type: none;
 }
 
 li {
   width: 150px;
   height: 150px;
+  text-align: center;
   background-color: black;
   color: white;
 }

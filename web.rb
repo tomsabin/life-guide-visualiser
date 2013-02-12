@@ -1,28 +1,26 @@
 require 'sinatra'
 require 'json'
+require './classes.rb'
+set :environment, :development
 set :public_folder, File.dirname(__FILE__) + '/assets'
+set :logging, :true
 
 get '/' do
   erb :start
 end
 
 post '/dataUpload/?' do
+  nodes, links = [], []
   raw = request.env["rack.input"].read
-  #process raw data, return as JSON?
+  raw = raw.split(/\r\n/)
+  raw.each do |line|
+    if line.include? "show"
+      nodes.push(Node.new(line.split(' ')[1], 0))
+    end
+  end
+
   { 
-    :nodes => [
-      {:name => "A", :group => 1},
-      {:name => "B", :group => 1},
-      {:name => "C", :group => 1},
-      {:name => "D", :group => 2},
-      {:name => "E", :group => 2}
-    ],
-    :links => [
-      {:source => 1, :target => 0, :value => 1},
-      {:source => 2, :target => 0, :value => 50},
-      {:source => 3, :target => 2, :value => 2},
-      {:source => 4, :target => 1, :value => 2},
-      {:source => 1, :target => 4, :value => 2}
-    ]
+    :nodes => nodes,
+    :links => links
   }.to_json
 end

@@ -17,6 +17,10 @@
       stroke: #999;
       stroke-opacity: .6;
     }
+    
+    .node:hover, .link:hover {
+      stroke: rgb(76, 179, 218);
+    }
     </style>
   </head>
   <body>
@@ -84,6 +88,30 @@
   </script>
   
   <script type="text/javascript">
+  function showInformation(obj, node) {
+    var top, left;
+    $("#graph").append("<div id='graph-tooltip'>");
+    if (node) {
+      $('#graph-tooltip').append("Node name: " + obj['name']);
+      top = obj['y'] - 10;
+      left = obj['x'] + 10;
+    } else {
+      var sourceNode = obj["source"];
+      var targetNode = obj["target"];
+      $('#graph-tooltip').append("Link value: " + obj['value']);
+      top = (sourceNode['y'] + targetNode['y']) / 2 - 10;
+      left = (sourceNode['x'] + targetNode['x']) / 2 + 10;
+    }
+    $("#graph").append("</div>");
+
+    $('#graph-tooltip').css("top", top+"px");
+    $('#graph-tooltip').css("left", left+"px");
+  }
+  
+  function hideInformation(obj) {
+    $('#graph-tooltip').remove();
+  }
+  
   //Code to produce tree
   //http://bl.ocks.org/4062045
   var width = graphWidth,
@@ -103,42 +131,46 @@
       .attr("width", width)
       .attr("height", height);
 
-  function drawGraph(input) {
-    var graph = input;
-    console.log(graph);
-    // d3.json("miserables.json", function(error, graph) {
-      force
-          .nodes(graph.nodes)
-          .links(graph.links)
-          .start();
+  function drawGraph(graph) {    
+    force
+      .nodes(graph.nodes)
+      .links(graph.links)
+      .start();
 
-      var link = svg.selectAll(".link")
-          .data(graph.links)
-        .enter().append("line")
-          .attr("class", "link")
-          .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+    var link = svg.selectAll(".link")
+      .data(graph.links)
+      .enter().append("line")
+      .attr("class", "link")
+      .on("mouseover", function(d) { showInformation(d, false); })
+      .on("mouseout", function(d) { hideInformation(d, false); })
+      .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+      
+    link.append("title")
+      .text(function(d) { return d.value; })
 
-      var node = svg.selectAll(".node")
-          .data(graph.nodes)
-        .enter().append("circle")
-          .attr("class", "node")
-          .attr("r", 5)
-          .style("fill", function(d) { return color(d.group); })
-          .call(force.drag);
+      var foo;
+    var node = svg.selectAll(".node")
+      .data(graph.nodes)
+      .enter().append("circle")
+      .attr("class", "node")
+      .attr("r", 5)
+      .style("fill", function(d) { return color(d.group); })
+      .on("mouseover", function(d) { showInformation(d, true); })
+      .on("mouseout", function(d) { hideInformation(d, true); })
+      .call(force.drag);
 
-      node.append("title")
-          .text(function(d) { return d.name; });
+    node.append("page")
+      .text(function(d) { return d.name; });
 
-      force.on("tick", function() {
-        link.attr("x1", function(d) { return d.source.x; })
-            .attr("y1", function(d) { return d.source.y; })
-            .attr("x2", function(d) { return d.target.x; })
-            .attr("y2", function(d) { return d.target.y; });
+    force.on("tick", function() {
+      link.attr("x1", function(d) { return d.source.x; })
+          .attr("y1", function(d) { return d.source.y; })
+          .attr("x2", function(d) { return d.target.x; })
+          .attr("y2", function(d) { return d.target.y; });
 
-        node.attr("cx", function(d) { return d.x; })
-            .attr("cy", function(d) { return d.y; });
-      });
-    // });
+      node.attr("cx", function(d) { return d.x; })
+          .attr("cy", function(d) { return d.y; });
+    });
   }
   </script>
 </html>
