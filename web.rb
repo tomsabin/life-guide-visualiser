@@ -14,7 +14,7 @@ post '/dataUpload/?' do
   raw = request.env["rack.input"].read
   raw = raw.split(/\r\n/)
   raw.each do |line|
-    if line.include? "show"
+    if line =~ /show\s[^\.]*$/
       nodes.push(Node.new(line.split(' ')[1], 0))
     end
   end
