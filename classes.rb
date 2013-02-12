@@ -18,7 +18,7 @@ class Node
   end
 end
 
-class Vertices
+class Vertex
   def initialize(source, target, value)
     @source = source
     @target = target
