@@ -7,8 +7,12 @@ class Node
     @connected_vetices = []
   end
   
-  def add_node(node_id)
-    @connected_vetices.push(node_id)
+  def name
+    @name
+  end
+  
+  def add_node(name)
+    @connected_vetices.push(name) #name of node is unique
   end
   
   def to_json(*a)
