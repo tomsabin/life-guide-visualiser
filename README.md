@@ -3,8 +3,10 @@ comp3020code
 
 COMP3020 Individual Project (code)
 
-+ Run server with <code>foreman start</code>, listening on [localhost:5000](http://localhost:5000/), or <code>rackup -p 5000 config.ru &</code>
++ Run server with `foreman start`, listening on [localhost:5000](http://localhost:5000/), or `rackup -p 5000 config.ru &`
 
-+ Deploy app to Heroku with <code>git push heroku master</code>
++ Kill a running server `lsof -i :5000`, `kill -9 ID`
 
-+ Open running Heroku app with <code>heroku open</code>
++ Deploy app to Heroku with `git push heroku master`
+
++ Open running Heroku app with `heroku open`
