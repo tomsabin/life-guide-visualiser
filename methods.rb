@@ -2,7 +2,7 @@
 
 def clean_input(raw)
   @raw = raw
-  raw.map! { |line| line == "" ? "<ENDBLOCK>" : line }
+  raw.map! { |line| line == "" ? "<ENDBLOCK>" : line } #--- not sure if this is best way
 end
 
 def parse_input(nodes, links)
@@ -14,46 +14,32 @@ def parse_input(nodes, links)
   end
   
   @raw.each_with_index do |line, index|
+    prev_line = @raw[index-1]
+    next_line = @raw[index+1]
     if show_token?(line)
-      source_name = line.split(' ')[1]
-      source_node = @nodes.find { |node| node.name if node.name == source_name }
-      source_index = @nodes.index(source_node)
-      if show_token?(next_show(index))
-        if !after_token?(@raw[index-1]) and !after_token?(@raw[index+1])
-          target_name = next_show(index).split(' ')[1]
-          target_node = @nodes.find { |node| node.name if node.name == target_name }
-          target_index = @nodes.index(target_node)
-          source_node.add_node(target_name)
-          @links.push( {:source => source_index, :target => target_index, :value => 1} )
+      if after_token?(prev_line)
+        add_link(
+          prev_line.split(' ')[1],
+          line.split(' ')[1],
+          3
+        )
+      elsif show_token?(next_show(index)) #--- this might cause problems in the future
+        if !after_token?(prev_line) and !after_token?(next_line)
+          add_link(
+            line.split(' ')[1],
+            next_show(index).split(' ')[1],
+            1
+          )
         end
       end
-      if after_token?(@raw[index+1])
-        block = @raw[index+1..@raw[index+1..@raw.length].index("<ENDBLOCK>")+index]
-        block.each do |line|
-          if after_token?(line) or show_token?(line)
-            if after_token?(line)
-              target_name = line.split(' ').last
-            elsif show_token?(line)
-              target_name = line.split(' ')[1]
-            end
-            target_node = @nodes.find { |node| node.name if node.name == target_name }
-            target_index = @nodes.index(target_node)
-            source_node.add_node(target_name)
-            puts "name: #{target_name}, node: #{target_node.inspect}, index: #{target_index}"
-            @links.push( {:source => source_index, :target => target_index, :value => 1} )
-          end
-        end
-      end
-
-
-      # puts "source_name: " + source_name
-      # puts "source_node: " + source_node.name
-      #need to find out source index and target index in @node
-
+    elsif after_token?(line)
+      add_link(
+        line.split(' ')[1],
+        line.split(' ').last,
+        2
+      )
     end
   end
-  
-  # need to make links as JSON from node list
 end
 
 def show_token?(line)
@@ -61,10 +47,10 @@ def show_token?(line)
 end
 
 def after_token?(line)
-  true if line =~ /after\s.*\sif\s\(.*\)\sgoto\s(.*)/ # /after\s.*\sif\s((isempty|and|or)\s)?\(.*\)\sgoto\s(.*)/
+  true if line =~ /after\s.*\sif\s((isempty|and|or)\s)?\(.*\)\sgoto\s(.*)/
 end
 
-def next_show(index)
+def next_show(index) #--- this might need rebuilding
   raw = @raw[index..@raw.length]
   begin 
     return raw[raw.index("<ENDBLOCK>")+1]
@@ -73,19 +59,15 @@ def next_show(index)
   end
 end
 
-def after_block(index)
-  raw = @raw[index..@raw.length]
-  begin 
-    return raw[raw.index("<ENDBLOCK>")+1]
-  rescue Exception
-    return raw[raw.length]
-  end
+def find_node(name)
+  @nodes.find { |node| node.name if node.name == name }
 end
 
-
-
-# /show\s[^\.]*$/
-# /after\s.*\sif\s\(.*\)\sgoto\s(.*)/
-# /after\s.*\sif\s((isempty|and|or)\s)?\(.*\)\sgoto\s(.*)/
-
-# links.push( {:source => 0, :target => 0, :value => 1} )
+def add_link(source_name, target_name, value)
+  find_node(source_name).add_node(target_name)
+  @links.push( {
+    :source => @nodes.index(find_node(source_name)),
+    :target => @nodes.index(find_node(target_name)),
+    :value => value
+  } )
+end
