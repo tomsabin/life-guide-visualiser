@@ -1,8 +1,9 @@
 @raw = []
 
 def clean_input(raw)
+  raw.map! { |line| line == "" ? " " : line }
+  raw.delete_if { |line| line =~ /^(?:(?!show|after).)+$/ }
   @raw = raw
-  raw.map! { |line| line == "" ? "<ENDBLOCK>" : line } #--- not sure if this is best way
 end
 
 def parse_input(nodes, links)
@@ -12,25 +13,23 @@ def parse_input(nodes, links)
       @nodes.push(Node.new(line.split(' ')[1], 0))
     end
   end
-  
+
   @raw.each_with_index do |line, index|
     prev_line = @raw[index-1]
     next_line = @raw[index+1]
     if show_token?(line)
-      if after_token?(prev_line)
+      if !after_token?(prev_line) and !after_token?(next_line) and show_token?(next_line)
+        add_link(
+          line.split(' ')[1],
+          next_line.split(' ')[1],
+          1
+        )
+      elsif after_token?(prev_line)
         add_link(
           prev_line.split(' ')[1],
           line.split(' ')[1],
           3
         )
-      elsif show_token?(next_show(index)) #--- this might cause problems in the future
-        if !after_token?(prev_line) and !after_token?(next_line)
-          add_link(
-            line.split(' ')[1],
-            next_show(index).split(' ')[1],
-            1
-          )
-        end
       end
     elsif after_token?(line)
       add_link(
@@ -48,15 +47,6 @@ end
 
 def after_token?(line)
   true if line =~ /after\s.*\sif\s((isempty|and|or)\s)?\(.*\)\sgoto\s(.*)/
-end
-
-def next_show(index) #--- this might need rebuilding
-  raw = @raw[index..@raw.length]
-  begin 
-    return raw[raw.index("<ENDBLOCK>")+1]
-  rescue Exception
-    return raw[raw.length]
-  end
 end
 
 def find_node(name)

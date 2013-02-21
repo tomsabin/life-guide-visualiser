@@ -24,6 +24,7 @@
     </style>
   </head>
   <body>
+    <div id="show-file-upload"></div>
     <div id="file-upload">
       <input type="file" id="file" name="file" enctype="multipart/form-data" />
     </div>
@@ -63,6 +64,13 @@
       $(this).addClass("selected");
     }
   });
+  
+  $("#show-file-upload").hide();
+  $("#show-file-upload").click(function() {
+    $("#file-upload").show();
+    $("#show-file-upload").hide();
+    $("svg").remove();
+  });
   </script>
   
   <script type="text/javascript">
@@ -81,6 +89,9 @@
   
   function post(input) {
     $("#file-upload").hide();
+    $("#show-file-upload").show();
+    $('#file').replaceWith($('#file').val('').clone(true));
+    document.getElementById('file').addEventListener('change', readFile, false);
     $.post('dataUpload', input, function(data) {
       drawGraph(JSON.parse(data));
     });
@@ -116,9 +127,6 @@
   //http://bl.ocks.org/4062045
   var width = graphWidth,
       height = graphHeight;
-      
-  // var width = 768,
-  //     height = 500;
 
   var color = d3.scale.category20();
 
@@ -127,11 +135,11 @@
       .linkDistance(30)
       .size([width, height]);
 
-  var svg = d3.select("#graph").append("svg")
-      .attr("width", width)
-      .attr("height", height);
-
-  function drawGraph(graph) {    
+  function drawGraph(graph) {
+    var svg = d3.select("#graph").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+    
     force
       .nodes(graph.nodes)
       .links(graph.links)

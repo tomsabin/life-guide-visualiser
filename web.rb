@@ -15,10 +15,9 @@ post '/dataUpload/?' do
   raw = request.env["rack.input"].read.split(/\r\n/)
   clean_input(raw)
   parse_input(nodes, links)
-  
-  nodes.each { |x| puts x.inspect }
-  links.each { |x| puts x.inspect }
-  
+  # @raw.each_with_index { |x, i| puts "#{i}: #{x}" }
+  # nodes.each { |x| puts x.inspect }
+  # links.each { |x| puts x.inspect }
   { 
     :nodes => nodes,
     :links => links

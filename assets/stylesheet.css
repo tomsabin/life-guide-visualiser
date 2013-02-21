@@ -41,6 +41,18 @@ body {
   background-color: rgb(76, 179, 218);
 }
 
+#show-file-upload {
+  cursor: pointer;
+  position: absolute;
+  text-align: center;
+  vertical-align: middle;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  background-color: rgb(76, 179, 218);
+}
+
 #sidebar-container {
   position: absolute;
   top: 0;
