@@ -16,8 +16,8 @@ post '/dataUpload/?' do
   clean_input(raw)
   parse_input(nodes, links)
   # @raw.each_with_index { |x, i| puts "#{i}: #{x}" }
-  # nodes.each { |x| puts x.inspect }
-  # links.each { |x| puts x.inspect }
+  nodes.each { |x| puts x.inspect }
+  links.each { |x| puts x.inspect }
   { 
     :nodes => nodes,
     :links => links

@@ -1,14 +1,19 @@
 require 'json'
 
 class Node
-  def initialize(name, group)
+  def initialize(name, group, type = 'none')
     @name = name
     @group = group
+    @type = type
     @connected_vetices = []
   end
   
   def name
     @name
+  end
+  
+  def change_type(type)
+    @type = type
   end
   
   def add_node(name)
@@ -18,7 +23,8 @@ class Node
   def to_json(*a)
     {
       'name' => @name,
-      'group' => @group
+      'group' => @group,
+      'type' => @type,
     }.to_json(*a)
   end
 

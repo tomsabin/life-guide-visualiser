@@ -33,7 +33,7 @@
     </div>
     <div id="sidebar-container">
       <ul id="layers">
-        <li>Label1</li>
+        <li id='nodetype'>Highlight node type</li>
         <li>Label2</li>
         <li>Label3</li>
         <li>Label4</li>
@@ -60,8 +60,26 @@
   $("li").click(function() {
     if ($(this).hasClass("selected")) {
       $(this).removeClass("selected");
+      switch(this['id']) {
+        case 'nodetype':
+          $.each($('circle'), function(index, value) {
+            this.style['fill'] = "#1f77b4";
+          });
+          break;
+      }
     } else {
       $(this).addClass("selected");
+      switch(this['id']) {
+        case 'nodetype':
+          $.each($('circle'), function(index, value) {
+            if (this.getAttribute('type') == 'show') {
+              this.style['fill'] = "#000";
+            } else if (this.getAttribute('type') == 'after') {
+              this.style['fill'] = "#CCC";
+            }
+          });
+          break;
+      }
     }
   });
   
@@ -162,6 +180,7 @@
       .enter().append("circle")
       .attr("class", "node")
       .attr("r", 5)
+      .attr("type", function(d) { return d.type })
       .style("fill", function(d) { return color(d.group); })
       .on("mouseover", function(d) { showInformation(d, true); })
       .on("mouseout", function(d) { hideInformation(d, true); })

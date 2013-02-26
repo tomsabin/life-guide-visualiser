@@ -18,6 +18,7 @@ def parse_input(nodes, links)
     prev_line = @raw[index-1]
     next_line = @raw[index+1]
     if show_token?(line)
+      find_node(line.split(' ')[1]).change_type('show')
       if !after_token?(prev_line) and !after_token?(next_line) and show_token?(next_line)
         add_link(
           line.split(' ')[1],
@@ -32,6 +33,7 @@ def parse_input(nodes, links)
         )
       end
     elsif after_token?(line)
+      find_node(line.split(' ')[1]).change_type('after')
       add_link(
         line.split(' ')[1],
         line.split(' ').last,
