@@ -81,38 +81,59 @@
         return false;
       },
 
-      drop : function( event ) {    
+      drop : function( event ) {
+        console.log('---------');
         event.stopPropagation();
         event.preventDefault();
         // console.log( event.originalEvent.dataTransfer.files );
         
         var $this = $(this);
         var dataTransfer = event.originalEvent.dataTransfer;
+        var files = dataTransfer.files;
         
-        if (dataTransfer.files.length > 0) {
-          $.each(dataTransfer.files, function ( i, file ) {
-            var item = dataTransfer.items[i].webkitGetAsEntry();
-            if (item.isFile) {
+        if (files.length > 0) {
+          var item = dataTransfer.items[0].webkitGetAsEntry();
+          if (item.isDirectory) {
+            //http://blog.protonet.info/post/26894439416/html5-drag-drop-files-and-folders
+            var dirReader = item.createReader();
+            dirReader.readEntries(function(entries) {
+              $.each(entries, function(i, entry) {
+              // console.log(i + " " + entry);
+                if (entry.isFile) {
+                  entry.file(function(file) {
+                    if (file['name'].match(/.+.(lgil|xml)/)) {
+                      console.log(i + ": " + file['name'] + " - " + file);
+                      var xhr = new XMLHttpRequest();
+                      var upload = xhr.upload;
+                      xhr.open($this.data('method') || 'POST', $this.data('url'), true);
+                      xhr.setRequestHeader('X_FILENAME', file['name']);
+                      xhr.send(file);
+                    }
+                  });
+                }
+              });
+              // dataTransfer = something that is FileList
+
+              //need to get all FileEntry to File (FileList) and replace dataTransfer.files
+            });
+          } else {
+            $.each(files, function ( i, file ) {
               if (file['name'].match(/.+.(lgil|xml)/)) {
-                //this will be called recursively eventually
-                console.log(i + " " + file);
-                console.log(file['name']);
+                console.log(i + ": " + file['name'] + " - " + file);
                 var xhr = new XMLHttpRequest();
                 var upload = xhr.upload;
                 xhr.open($this.data('method') || 'POST', $this.data('url'), true);
                 xhr.setRequestHeader('X_FILENAME', file['name']);
                 xhr.send(file);
               }
-            } else if (item.isDirectory) {
-              console.log('directory');
-            }
-          });
+            });
+          }
         };
         
         return false;
       }
     };
-
+    
     $.fn.dndUploader = function( method ) {
       if ( methods[method] ) {
         return methods[method].apply( this, Array.prototype.slice.call( arguments, 1 ));
