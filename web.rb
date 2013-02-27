@@ -10,16 +10,20 @@ get '/' do
   erb :start
 end
 
-post '/dataUpload/?' do
-  nodes, links = [], []
-  raw = request.env["rack.input"].read.split(/\r\n/)
-  clean_input(raw)
-  parse_input(nodes, links)
-  # @raw.each_with_index { |x, i| puts "#{i}: #{x}" }
-  nodes.each { |x| puts x.inspect }
-  links.each { |x| puts x.inspect }
-  { 
-    :nodes => nodes,
-    :links => links
-  }.to_json
+put '/upload' do
+  puts "uploaded #{env['HTTP_X_FILENAME']} - #{request.body.read.size} bytes"
 end
+
+# post '/lgilUpload/?' do
+#   nodes, links = [], []
+#   raw = request.env["rack.input"].read.split(/\r\n/)
+#   clean_input(raw)
+#   parse_input(nodes, links)
+#   # @raw.each_with_index { |x, i| puts "#{i}: #{x}" }
+#   nodes.each { |x| puts x.inspect }
+#   links.each { |x| puts x.inspect }
+#   { 
+#     :nodes => nodes,
+#     :links => links
+#   }.to_json
+# end
