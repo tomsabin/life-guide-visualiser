@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assessmentItem
+  xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 imsqti_v2p1.xsd"
+  identifier="data3"
+  title="data3"
+  adaptive="false"
+  timeDependent="false">
+  <templateDeclaration identifier="dataout" cardinality="single" baseType="string"/>
+  <templateDeclaration identifier="username" cardinality="single" baseType="string"/>
+  <templateProcessing/>
+  <stylesheet href="data3-out.css" type="text/css"/>
+  <itemBody class="nobuttons">
+    <div id="container-body">
+      <div id="textbox-2" class="null includeBorderAndPadding">
+        <printedVariable identifier="dataout"/>
+      </div>
+      <div id="textbox-1" class="includeBorderAndPadding">
+        Data 3
+      </div>
+      <div id="textbox-3" class="null includeBorderAndPadding">
+        logged in as 
+        <printedVariable identifier="username"/>
+      </div>
+      <div id="button-1" class="logout">
+        Logout
+      </div>
+    </div>
+  </itemBody>
+</assessmentItem>

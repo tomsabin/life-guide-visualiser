@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest xmlns="http://www.imsglobal.org/xsd/imscp_v1p1" identifier="6ae5f96f-57a7-419a-afeb-cdff367d4a66" >
+	<resources>
+		<resource identifier="RES-0fe35889-193c-4cd3-9ad7-aff10094747f" type="imsqti_assessment_xmlv2p1" href="intervention.xml" />
+		<resource identifier="RES-848f03ed-7f24-450b-95cf-478731ea23d7" type="imsqti_item_xmlv2p1" href="data3.xml" />
+		<resource identifier="RES-32923e62-ab02-42a7-a09f-f108d2a9fd42" type="imsqti_item_xmlv2p1" href="data2.xml" />
+		<resource identifier="RES-a5b0d34e-7627-47cb-a798-3f9ae5d6ff9f" type="imsqti_item_xmlv2p1" href="register.xml" />
+		<resource identifier="RES-1db16063-6356-4dea-9e24-219f825428db" type="imsqti_item_xmlv2p1" href="data1.xml" />
+		<resource identifier="RES-99203b37-7800-49af-a63a-c91e96508a41" type="imsqti_item_xmlv2p1" href="welcome.xml" />
+		<resource identifier="RES-61fa4539-17fe-47aa-b9bf-525b86892386" type="imsqti_item_xmlv2p1" href="registerfail.xml" />
+		<resource identifier="RES-30f8d8b5-34d3-4237-bd9a-72cb92438f95" type="imsqti_item_xmlv2p1" href="loginfail.xml" />
+		<resource identifier="RES-4d039dd5-dbf2-49a4-a3d7-59ea875e56c7" type="imsqti_item_xmlv2p1" href="login.xml" />
+	</resources>
+</manifest>

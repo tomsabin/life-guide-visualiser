@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<intervention>
+<interventionName>My Intervention</interventionName>
+<version>0.1</version>
+<author></author>
+<otherAuthor></otherAuthor>
+<keywords></keywords>
+<description></description>
+<organisation>University of Southampton</organisation>
+<rights>Open Source</rights>
+<language>English</language>
+<time>00:00</time>
+<date>00/00/0000</date>
+<lifeguideVersion>0.0</lifeguideVersion>
+</intervention>

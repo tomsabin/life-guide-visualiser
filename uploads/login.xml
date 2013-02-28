@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assessmentItem
+  xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 imsqti_v2p1.xsd"
+  identifier="login"
+  title="login"
+  adaptive="false"
+  timeDependent="false">
+  <responseDeclaration identifier="r_username" cardinality="single" baseType="string"/>
+  <responseDeclaration identifier="r_password" cardinality="single" baseType="string"/>
+  <outcomeDeclaration identifier="username" cardinality="single" baseType="string"/>
+  <outcomeDeclaration identifier="password" cardinality="single" baseType="string"/>
+  <stylesheet href="login-out.css" type="text/css"/>
+  <itemBody>
+    <div id="container-body">
+      <div id="textbox-1" class="includeBorderAndPadding">
+        Login
+      </div>
+      <div id="textbox-2" class="includeBorderAndPadding">
+        UN
+      </div>
+      <div id="textbox-3" class="includeBorderAndPadding">
+        PW
+      </div>
+      <div>
+        <textEntryInteraction responseIdentifier="r_username"/>
+      </div>
+      <div>
+        <textEntryInteraction responseIdentifier="r_password"/>
+      </div>
+      <div id="button-1" class="submit-button">
+        login
+      </div>
+    </div>
+  </itemBody>
+  <responseProcessing>
+    <setOutcomeValue identifier="username">
+      <variable identifier="r_username"/>
+    </setOutcomeValue>
+    <setOutcomeValue identifier="password">
+      <variable identifier="r_password"/>
+    </setOutcomeValue>
+  </responseProcessing>
+</assessmentItem>

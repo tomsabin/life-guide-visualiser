@@ -20,12 +20,16 @@ put '/upload' do
 end
 
 get '/processFiles' do
+  #this needs to definitely wait for all the files to upload!
+  #also needs to clear the previous contents
   nodes, links = [], []
+  # #need to match .lgil or to rename all lgil to intervention.lgil
   lgil_file = File.open('uploads/' + 'intervention.lgil', "r").read.split(/\r\n/)
   clean_lgil(lgil_file)
-  parse_lgil(nodes, links)
-  FileUtils.rm_rf('uploads')
-  # @raw.each_with_index { |x, i| puts "#{i}: #{x}" }
+  create_nodes(nodes, links)
+  parse_lgil
+  parse_xml
+  # # @raw.each_with_index { |x, i| puts "#{i}: #{x}" }
   nodes.each { |x| puts x.inspect }
   links.each { |x| puts x.inspect }
   { 

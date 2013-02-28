@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assessmentItem
+  xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 imsqti_v2p1.xsd"
+  identifier="loginfail"
+  title="loginfail"
+  adaptive="false"
+  timeDependent="false">
+  <stylesheet href="loginfail-out.css" type="text/css"/>
+  <itemBody class="nobuttons">
+    <div id="container-body">
+      <div id="textbox-1" class="includeBorderAndPadding">
+        loginfail
+      </div>
+      <div id="button-1" class="submit-jumpto-button" label="welcome">
+        front
+      </div>
+    </div>
+  </itemBody>
+</assessmentItem>
