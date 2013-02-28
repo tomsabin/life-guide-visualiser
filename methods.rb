@@ -1,8 +1,10 @@
 @raw = []
 
 def clean_lgil(raw)
+  # raw.each_with_index {|line,index| puts "#{index}: #{line}"}
   raw.map! { |line| line == "" ? " " : line }
   raw.delete_if { |line| line =~ /^(?:(?!show|after).)+$/ }
+  # raw.each_with_index {|line,index| puts "#{index}: #{line}"}
   @raw = raw
 end
 
@@ -15,7 +17,8 @@ def create_nodes(nodes, links)
   end
 end
 
-def parse_lgil
+def parse_lgil #this needs fixing on red labelled intervention folders
+  #error: ArgumentError - invalid byte sequence in UTF-8:
   @raw.each_with_index do |line, index|
     prev_line = @raw[index-1]
     next_line = @raw[index+1]
@@ -48,19 +51,27 @@ end
 def parse_xml
   @nodes.each do |node|
     Dir.entries("uploads/").find do |file|
-      puts "#{node.name}, #{file}" if node.name == file[0..-5]
+      # puts "#{node.name}, #{file}" if node.name == file[0..-5]
       parse_xml_file(node.name, file) if node.name == file[0..-5]
     end
   end
 end
 
+#need to check for duplicate links that exist already -- could cause rendering problems in the future!
 def parse_xml_file(source_name, filename)
   File.open('uploads/' + filename).read.split(/\n/).each do |line|
     if div_link_token?(line)
-      puts "adding a link from #{source_name}/#{filename} to #{line.split(/label=("|')/).last.split(/("|')/).first}"
+      # puts "adding a link from #{source_name}/#{filename} to #{line.split(/label=("|')/).last.split(/("|')/).first}"
       add_link(
         source_name,
         line.split(/label=("|')/).last.split(/("|')/).first,
+        4
+      )
+    end
+    if a_link_token?(line)
+      add_link(
+        source_name,
+        line.split(/\?jumpto=/).last.split(/("|')/).first,
         4
       )
     end
@@ -69,6 +80,10 @@ end
 
 def div_link_token?(line)
   true if line =~ /<div.*id=("|')button-[A-z0-9_]*("|').*class=("|')submit-jumpto-button("|').*label=("|')[A-z0-9_]*("|').*/
+end
+
+def a_link_token?(line)
+  true if line =~ /<a.*href=("|')\?jumpto=[A-z0-9]*("|').*/
 end
 
 def show_token?(line)

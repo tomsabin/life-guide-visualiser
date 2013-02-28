@@ -14,24 +14,30 @@ end
 
 put '/upload' do
   Dir.mkdir('uploads') unless File.exists?('uploads')
-  File.open('uploads/' + env['HTTP_X_FILENAME'], "w") do |f|
-    f.write(request.body.read)
+  if env['HTTP_X_FILENAME'] =~ /.+.lgil/
+    File.open('uploads/intervention.lgil', "w") do |f|
+      f.write(request.body.read)
+    end
+  else
+    File.open('uploads/' + env['HTTP_X_FILENAME'], "w") do |f|
+      f.write(request.body.read)
+    end
   end
 end
 
 get '/processFiles' do
+  FileUtils.rm_rf('uploads/*') #--------------------------------this needs testing:
   #this needs to definitely wait for all the files to upload!
   #also needs to clear the previous contents
   nodes, links = [], []
-  # #need to match .lgil or to rename all lgil to intervention.lgil
-  lgil_file = File.open('uploads/' + 'intervention.lgil', "r").read.split(/\r\n/)
+  lgil_file = File.open('uploads/' + 'intervention.lgil', "r").read.split(/\r\n/) #somethings going on here!
   clean_lgil(lgil_file)
   create_nodes(nodes, links)
   parse_lgil
   parse_xml
   # # @raw.each_with_index { |x, i| puts "#{i}: #{x}" }
-  nodes.each { |x| puts x.inspect }
-  links.each { |x| puts x.inspect }
+  # nodes.each { |x| puts x.inspect }
+  # links.each { |x| puts x.inspect }
   { 
     :nodes => nodes,
     :links => links
