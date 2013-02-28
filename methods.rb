@@ -1,12 +1,12 @@
 @raw = []
 
-def clean_input(raw)
+def clean_lgil(raw)
   raw.map! { |line| line == "" ? " " : line }
   raw.delete_if { |line| line =~ /^(?:(?!show|after).)+$/ }
   @raw = raw
 end
 
-def parse_input(nodes, links)
+def parse_lgil(nodes, links)
   @nodes, @links = nodes, links
   @raw.each do |line|
     if line =~ /show\s[^\.]*$/

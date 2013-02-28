@@ -26,6 +26,7 @@
   <body>
     <div id="show-file-upload"></div>
     <div id="file-upload">
+      drag and drop an intervention folder/files here
       <!-- <input type="file" id="file" name="file" enctype="multipart/form-data" multiple /> -->
     </div>
     <div id="graph-container">
@@ -45,6 +46,55 @@
       </ul>
     </div>
   </body>
+   <script type="text/javascript">
+  //styling JS
+  var graphWidth =$(window).width()-150;
+  var graphHeight =$(window).height()-20;
+  $("#sidebar-container").height($(window).height());
+  $("#layers").height($(window).height());
+  $("#file-upload").css("top", $(window).height()/2-100);
+  $("#file-upload").css("left", $(window).width()/2-200);
+  $("#graph-container").width(graphWidth);
+  $("#graph").width(graphWidth);
+  $("#graph").height(graphHeight);
+
+  $("#show-file-upload").hide();
+  $("#show-file-upload").click(function() {
+    $("#file-upload").show();
+    $("#show-file-upload").hide();
+    $("svg").remove();
+  });
+  </script>
+
+  <script type="text/javascript">
+  //layers
+  $("li").click(function() {
+    if ($(this).hasClass("selected")) {
+      $(this).removeClass("selected");
+      switch(this['id']) {
+        case 'nodetype':
+          $.each($('circle'), function(index, value) {
+            this.style['fill'] = "#1f77b4";
+          });
+          break;
+      }
+    } else {
+      $(this).addClass("selected");
+      switch(this['id']) {
+        case 'nodetype':
+          $.each($('circle'), function(index, value) {
+            if (this.getAttribute('type') == 'show') {
+              this.style['fill'] = "#000";
+            } else if (this.getAttribute('type') == 'after') {
+              this.style['fill'] = "#CCC";
+            }
+          });
+          break;
+      }
+    }
+  });
+  </script>
+  
   <script type="text/javascript">
   //dnduploader:
   //http://onehub.com/blog/posts/designing-an-html5-drag-drop-file-uploader-using-sinatra-and-jquery-part-1/
@@ -52,9 +102,8 @@
 
     var methods = {
       init : function( options ) {
-
+        
       return this.each(function(){
-
          var $this = $(this);
          
          $.each(options, function( label, setting ) {
@@ -82,7 +131,6 @@
       },
 
       drop : function( event ) {
-        console.log('---------');
         event.stopPropagation();
         event.preventDefault();
         // console.log( event.originalEvent.dataTransfer.files );
@@ -106,16 +154,19 @@
                       var xhr = new XMLHttpRequest();
                       var upload = xhr.upload;
                       xhr.open($this.data('method') || 'POST', $this.data('url'), true);
+                      // xhr.onreadystatechange = function() {
+                      //   if (xhr.readyState == 4) {
+                      //     console.log("foo");
+                      //   }
+                      // }
                       xhr.setRequestHeader('X_FILENAME', file['name']);
                       xhr.send(file);
                     }
                   });
                 }
               });
-              // dataTransfer = something that is FileList
-
-              //need to get all FileEntry to File (FileList) and replace dataTransfer.files
             });
+            console.log('done folder');
           } else {
             $.each(files, function ( i, file ) {
               if (file['name'].match(/.+.(lgil|xml)/)) {
@@ -128,6 +179,7 @@
               }
             });
           }
+          processResults();
         };
         
         return false;
@@ -153,172 +205,99 @@
     });
   </script>
   
- <!--   <script type="text/javascript">
-   //styling JS
-   var graphWidth =$(window).width()-150;
-   var graphHeight =$(window).height()-20;
-   $("#sidebar-container").height($(window).height());
-   $("#layers").height($(window).height());
-   $("#file-upload").css("top", $(window).height()/2-100);
-   $("#file-upload").css("left", $(window).width()/2-200);
-   $("#graph-container").width(graphWidth);
-   $("#graph").width(graphWidth);
-   $("#graph").height(graphHeight);
-   
-   $("li").click(function() {
-     if ($(this).hasClass("selected")) {
-       $(this).removeClass("selected");
-       switch(this['id']) {
-         case 'nodetype':
-           $.each($('circle'), function(index, value) {
-             this.style['fill'] = "#1f77b4";
-           });
-           break;
-       }
-     } else {
-       $(this).addClass("selected");
-       switch(this['id']) {
-         case 'nodetype':
-           $.each($('circle'), function(index, value) {
-             if (this.getAttribute('type') == 'show') {
-               this.style['fill'] = "#000";
-             } else if (this.getAttribute('type') == 'after') {
-               this.style['fill'] = "#CCC";
-             }
-           });
-           break;
-       }
-     }
-   });
-   
-   $("#show-file-upload").hide();
-   $("#show-file-upload").click(function() {
-     $("#file-upload").show();
-     $("#show-file-upload").hide();
-     $("svg").remove();
-   });
-   </script>
-   
-   <script type="text/javascript">
-   //Code to read files and ajax post to server
-   document.getElementById('file').addEventListener('change', readFile, false);
+  <script type="text/javascript">
+  //Code to read files and ajax post to server
+  function processResults() {
+    $("#file-upload").hide();
+    $("#show-file-upload").show();
+    $.get('processFiles', function(data) {
+      drawGraph(JSON.parse(data));
+    });
+  }
+  </script>
 
-   function readFile (evt) {
-     var files = evt.target.files;
-     var logic_file;
-     var xml_files = [];
-     $.each(files, function(index, value) {
-       if (value['name'].match(/.+.lgil/)) {
-         logic_file = files[index];
-       } else if (value['name'].match(/.+.xml/)) {
-         xml_files.push(files[index]);
-       }
-     });
-     
-     console.log(logic_file);
-     console.log(xml_files);
-     ///--------------------------------------now to do something with these files!
-     var reader = new FileReader();
-     reader.onload = function() {
-       post(this.result);            
-     }
-     reader.readAsText(file)
-   }
-   
-   function post(lgil, xml) {
-     $("#file-upload").hide();
-     $("#show-file-upload").show();
-     $('#file').replaceWith($('#file').val('').clone(true));
-     document.getElementById('file').addEventListener('change', readFile, false);
-     $.post('xmlUpload', xml, function(data) { });
-     $.post('lgilUpload', lgil, function(data) {
-       drawGraph(JSON.parse(data));
-     });
-   }
-   </script>
-   
-   <script type="text/javascript">
-   function showInformation(obj, node) {
-     var top, left;
-     $("#graph").append("<div id='graph-tooltip'>");
-     if (node) {
-       $('#graph-tooltip').append("Node name: " + obj['name']);
-       top = obj['y'] - 10;
-       left = obj['x'] + 10;
-     } else {
-       var sourceNode = obj["source"];
-       var targetNode = obj["target"];
-       $('#graph-tooltip').append("Link value: " + obj['value']);
-       top = (sourceNode['y'] + targetNode['y']) / 2 - 10;
-       left = (sourceNode['x'] + targetNode['x']) / 2 + 10;
-     }
-     $("#graph").append("</div>");
+  <script type="text/javascript">
+  function showInformation(obj, node) {
+    var top, left;
+    $("#graph").append("<div id='graph-tooltip'>");
+    if (node) {
+      $('#graph-tooltip').append("Node name: " + obj['name']);
+      top = obj['y'] - 10;
+      left = obj['x'] + 10;
+    } else {
+      var sourceNode = obj["source"];
+      var targetNode = obj["target"];
+      $('#graph-tooltip').append("Link value: " + obj['value']);
+      top = (sourceNode['y'] + targetNode['y']) / 2 - 10;
+      left = (sourceNode['x'] + targetNode['x']) / 2 + 10;
+    }
+    $("#graph").append("</div>");
 
-     $('#graph-tooltip').css("top", top+"px");
-     $('#graph-tooltip').css("left", left+"px");
-   }
-   
-   function hideInformation(obj) {
-     $('#graph-tooltip').remove();
-   }
-   
-   //Code to produce tree
-   //http://bl.ocks.org/4062045
-   var width = graphWidth,
-       height = graphHeight;
+    $('#graph-tooltip').css("top", top+"px");
+    $('#graph-tooltip').css("left", left+"px");
+  }
 
-   var color = d3.scale.category20();
+  function hideInformation(obj) {
+    $('#graph-tooltip').remove();
+  }
 
-   var force = d3.layout.force()
-       .charge(-120)
-       .linkDistance(30)
-       .size([width, height]);
+  //Code to produce tree
+  //http://bl.ocks.org/4062045
+  var width = graphWidth,
+      height = graphHeight;
 
-   function drawGraph(graph) {
-     var svg = d3.select("#graph").append("svg")
-         .attr("width", width)
-         .attr("height", height);
-     
-     force
-       .nodes(graph.nodes)
-       .links(graph.links)
-       .start();
+  var color = d3.scale.category20();
 
-     var link = svg.selectAll(".link")
-       .data(graph.links)
-       .enter().append("line")
-       .attr("class", "link")
-       .on("mouseover", function(d) { showInformation(d, false); })
-       .on("mouseout", function(d) { hideInformation(d, false); })
-       .style("stroke-width", function(d) { return Math.sqrt(d.value); });
-       
-     link.append("title")
-       .text(function(d) { return d.value; })
+  var force = d3.layout.force()
+      .charge(-120)
+      .linkDistance(30)
+      .size([width, height]);
 
-       var foo;
-     var node = svg.selectAll(".node")
-       .data(graph.nodes)
-       .enter().append("circle")
-       .attr("class", "node")
-       .attr("r", 5)
-       .attr("type", function(d) { return d.type })
-       .style("fill", function(d) { return color(d.group); })
-       .on("mouseover", function(d) { showInformation(d, true); })
-       .on("mouseout", function(d) { hideInformation(d, true); })
-       .call(force.drag);
+  function drawGraph(graph) {
+    var svg = d3.select("#graph").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+  
+    force
+      .nodes(graph.nodes)
+      .links(graph.links)
+      .start();
 
-     node.append("page")
-       .text(function(d) { return d.name; });
+    var link = svg.selectAll(".link")
+      .data(graph.links)
+      .enter().append("line")
+      .attr("class", "link")
+      .on("mouseover", function(d) { showInformation(d, false); })
+      .on("mouseout", function(d) { hideInformation(d, false); })
+      .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+    
+    link.append("title")
+      .text(function(d) { return d.value; })
 
-     force.on("tick", function() {
-       link.attr("x1", function(d) { return d.source.x; })
-           .attr("y1", function(d) { return d.source.y; })
-           .attr("x2", function(d) { return d.target.x; })
-           .attr("y2", function(d) { return d.target.y; });
+      var foo;
+    var node = svg.selectAll(".node")
+      .data(graph.nodes)
+      .enter().append("circle")
+      .attr("class", "node")
+      .attr("r", 5)
+      .attr("type", function(d) { return d.type })
+      .style("fill", function(d) { return color(d.group); })
+      .on("mouseover", function(d) { showInformation(d, true); })
+      .on("mouseout", function(d) { hideInformation(d, true); })
+      .call(force.drag);
 
-       node.attr("cx", function(d) { return d.x; })
-           .attr("cy", function(d) { return d.y; });
-     });
-   }
-   </script> -->
+    node.append("page")
+      .text(function(d) { return d.name; });
+
+    force.on("tick", function() {
+      link.attr("x1", function(d) { return d.source.x; })
+          .attr("y1", function(d) { return d.source.y; })
+          .attr("x2", function(d) { return d.target.x; })
+          .attr("y2", function(d) { return d.target.y; });
+
+      node.attr("cx", function(d) { return d.x; })
+          .attr("cy", function(d) { return d.y; });
+    });
+  }
+  </script>
 </html>
