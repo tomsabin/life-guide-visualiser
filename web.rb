@@ -26,10 +26,8 @@ put '/upload' do
 end
 
 get '/processFiles' do
-  #this needs to definitely wait for all the files to upload!
-  #also needs to clear the previous contents
   nodes, links = [], []
-  lgil_file = File.open('uploads/' + 'intervention.lgil', "r").read.split(/\r\n/) #somethings going on here!
+  lgil_file = File.open('uploads/' + 'intervention.lgil', "r").read.split(/\r\n/) #encoding problem occurs here
   clean_lgil(lgil_file)
   create_nodes(nodes, links)
   parse_lgil

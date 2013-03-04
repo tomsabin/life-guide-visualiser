@@ -243,6 +243,7 @@
   //Code to read files and ajax post to server
   //-------------------this definitely needs to wait for multiple uploads to be complete!
   function processResults() {
+    console.log('in progress: ' + uploadCount + '/' + fileCount);
     if (fileCount == uploadCount) {
       fileCount = 0;
       uploadCount = 0;
@@ -251,10 +252,7 @@
       $.get('processFiles', function(data) {
         drawGraph(JSON.parse(data));
       });
-    } else {
-      console.log('in progress');
     }
-
   }
   </script>
 
