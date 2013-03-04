@@ -1,10 +1,10 @@
 @raw = []
 
 def clean_lgil(raw)
-  raw.each_with_index {|line,index| puts "#{index}: #{line}"}
+  # raw.each_with_index {|line,index| puts "#{index}: #{line}"}
   raw.map! { |line| line == "" ? " " : line }
   raw.delete_if { |line| line =~ /^(?:(?!show|after|begin).)+$/ }
-  raw.each_with_index {|line,index| puts "#{index}: #{line}"}
+  # raw.each_with_index {|line,index| puts "#{index}: #{line}"}
   @raw = raw
 end
 
@@ -109,7 +109,10 @@ def find_node(name)
 end
 
 def add_link(source_name, target_name, value = 1, type = "none")
-  # puts "---trying to find #{source_name} (#{@nodes.index(find_node(source_name))}), to add #{target_name} (#{@nodes.index(find_node(target_name))})"
+  # puts "---trying to find #{source_name} (#{@nodes.index(find_node(source_name))}), to add #{target_name} (#{@nodes.index(find_node(target_name))})" if not @nodes.index(find_node(target_name))
+  if not @nodes.index(find_node(target_name))
+    @nodes.push(Node.new(target_name, 2))
+  end
   find_node(source_name).add_node(target_name)
   @links.push( {
     :source => @nodes.index(find_node(source_name)),
