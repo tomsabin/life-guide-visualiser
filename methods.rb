@@ -23,26 +23,27 @@ def parse_lgil #this needs fixing on red labelled intervention folders
     prev_line = @raw[index-1]
     next_line = @raw[index+1]
     if show_token?(line)
-      find_node(line.split(' ')[1]).change_type('show')
       if !after_token?(prev_line) and !after_token?(next_line) and show_token?(next_line)
         add_link(
           line.split(' ')[1],
           next_line.split(' ')[1],
-          1
+          1,
+          "show"
         )
       elsif after_token?(prev_line)
         add_link(
           prev_line.split(' ')[1],
           line.split(' ')[1],
-          3
+          3,
+          "after"
         )
       end
     elsif after_token?(line)
-      find_node(line.split(' ')[1]).change_type('after')
       add_link(
         line.split(' ')[1],
         line.split(' ').last,
-        2
+        2,
+        "show"
       )
     end
   end
@@ -65,25 +66,27 @@ def parse_xml_file(source_name, filename)
       add_link(
         source_name,
         line.split(/label=("|')/).last.split(/("|')/).first,
-        4
+        4,
+        "div"
       )
     end
     if a_link_token?(line)
       add_link(
         source_name,
         line.split(/\?jumpto=/).last.split(/("|')/).first,
-        4
+        5,
+        "a"
       )
     end
   end
 end
 
 def div_link_token?(line)
-  true if line =~ /<div.*id=("|')button-[A-z0-9_]*("|').*class=("|')submit-jumpto-button("|').*label=("|')[A-z0-9_]*("|').*/
+  true if line =~ /<div.*id=("|')button-[A-z0-9_-]*("|').*class=("|')submit-jumpto-button("|').*label=("|')[A-z0-9_-]*("|').*/
 end
 
 def a_link_token?(line)
-  true if line =~ /<a.*href=("|')\?jumpto=[A-z0-9]*("|').*/
+  true if line =~ /<a.*href=("|')\?jumpto=[A-z0-9_-]*("|').*/
 end
 
 def show_token?(line)
@@ -98,11 +101,12 @@ def find_node(name)
   @nodes.find { |node| node.name if node.name == name }
 end
 
-def add_link(source_name, target_name, value = 1)
+def add_link(source_name, target_name, value = 1, type = "none")
   find_node(source_name).add_node(target_name)
   @links.push( {
     :source => @nodes.index(find_node(source_name)),
     :target => @nodes.index(find_node(target_name)),
-    :value => value
+    :value => value,
+    :type => type
   } )
 end

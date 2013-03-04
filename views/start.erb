@@ -34,10 +34,10 @@
     </div>
     <div id="sidebar-container">
       <ul id="layers">
-        <li id='nodetype'>Highlight node type</li>
-        <li>Label2</li>
-        <li>Label3</li>
-        <li>Label4</li>
+        <li id='show_link'>Highlight show links</li>
+        <li id='after_link'>Highlight after links</li>
+        <li id='div_link'>Highlight div links</li>
+        <li id='a_link'>Highlight a links</li>
         <li>Label5</li>
         <li>Label6</li>
         <li>Label7</li>
@@ -72,30 +72,58 @@
     if ($(this).hasClass("selected")) {
       $(this).removeClass("selected");
       switch(this['id']) {
-        case 'nodetype':
-          $.each($('circle'), function(index, value) {
-            this.style['fill'] = "#1f77b4";
-          });
+        case 'show_link':
+          resetLink('show');
+          break;
+        case 'after_link':
+          resetLink('after');
+          break;
+        case 'div_link':
+          resetLink('div');
+          break;
+        case 'a_link':
+          resetLink('a');
           break;
       }
     } else {
       $(this).addClass("selected");
       switch(this['id']) {
-        case 'nodetype':
-          $.each($('circle'), function(index, value) {
-            if (this.getAttribute('type') == 'show') {
-              this.style['fill'] = "#000";
-            } else if (this.getAttribute('type') == 'after') {
-              this.style['fill'] = "#CCC";
-            }
-          });
+        case 'show_link':
+          colourLink('show', 'red');
+          break;      
+        case 'after_link':
+          colourLink('after', 'pink');
+          break;
+        case 'div_link':
+          colourLink('div', 'blue');
+          break;
+        case 'a_link':
+          colourLink('a', 'green');
           break;
       }
     }
   });
+  
+  function colourLink(type, colour) {
+    $.each($('line'), function(index, value) {
+      if (this.getAttribute('type') == type) {
+        this.style['stroke'] = colour;
+      }
+    });
+  }
+  
+  function resetLink(type) {
+    $.each($('line'), function(index, value) {
+      if (this.getAttribute('type') == type) {
+        this.style['stroke'] = "#999";
+      }
+    });
+  }
   </script>
   
   <script type="text/javascript">
+  var fileCount = 0;
+  var uploadCount = 0;
   //dnduploader:
   //http://onehub.com/blog/posts/designing-an-html5-drag-drop-file-uploader-using-sinatra-and-jquery-part-1/
   (function( $ ){
@@ -150,15 +178,17 @@
                 if (entry.isFile) {
                   entry.file(function(file) {
                     if (file['name'].match(/.+.(lgil|xml)/)) {
-                      console.log(i + ": " + file['name'] + " - " + file);
+                      fileCount++;
+                      console.log("f(" + fileCount + ") " + i + ": " + file['name'] + " - " + file);
                       var xhr = new XMLHttpRequest();
                       var upload = xhr.upload;
                       xhr.open($this.data('method') || 'POST', $this.data('url'), true);
-                      // xhr.onreadystatechange = function() {
-                      //   if (xhr.readyState == 4) {
-                      //     console.log("foo");
-                      //   }
-                      // }
+                      xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4) {
+                          uploadCount++;
+                          processResults()
+                        }
+                      }
                       xhr.setRequestHeader('X_FILENAME', file['name']);
                       xhr.send(file);
                     }
@@ -166,22 +196,26 @@
                 }
               });
             });
-            console.log('done folder');
           } else {
             $.each(files, function ( i, file ) {
               if (file['name'].match(/.+.(lgil|xml)/)) {
-                console.log(i + ": " + file['name'] + " - " + file);
+                fileCount++;
+                console.log("s(" + fileCount + ") " + i + ": " + file['name'] + " - " + file);
                 var xhr = new XMLHttpRequest();
                 var upload = xhr.upload;
                 xhr.open($this.data('method') || 'POST', $this.data('url'), true);
+                xhr.onreadystatechange = function() {
+                  if (xhr.readyState == 4) {
+                    uploadCount++;
+                    processResults()
+                  }
+                }
                 xhr.setRequestHeader('X_FILENAME', file['name']);
                 xhr.send(file);
               }
             });
           }
-          processResults();
         };
-        
         return false;
       }
     };
@@ -209,13 +243,18 @@
   //Code to read files and ajax post to server
   //-------------------this definitely needs to wait for multiple uploads to be complete!
   function processResults() {
-    setTimeout(function() {
+    if (fileCount == uploadCount) {
+      fileCount = 0;
+      uploadCount = 0;
       $("#file-upload").hide();
       $("#show-file-upload").show();
       $.get('processFiles', function(data) {
         drawGraph(JSON.parse(data));
-      });      
-    }, 2000); //remove this timer when complete
+      });
+    } else {
+      console.log('in progress');
+    }
+
   }
   </script>
 
@@ -270,6 +309,7 @@
       .data(graph.links)
       .enter().append("line")
       .attr("class", "link")
+      .attr("type", function(d) { return d.type })
       .on("mouseover", function(d) { showInformation(d, false); })
       .on("mouseout", function(d) { hideInformation(d, false); })
       .style("stroke-width", function(d) { return Math.sqrt(d.value); });
@@ -283,7 +323,6 @@
       .enter().append("circle")
       .attr("class", "node")
       .attr("r", 5)
-      .attr("type", function(d) { return d.type })
       .style("fill", function(d) { return color(d.group); })
       .on("mouseover", function(d) { showInformation(d, true); })
       .on("mouseout", function(d) { hideInformation(d, true); })

@@ -26,7 +26,6 @@ put '/upload' do
 end
 
 get '/processFiles' do
-  FileUtils.rm_rf('uploads/*') #--------------------------------this needs testing:
   #this needs to definitely wait for all the files to upload!
   #also needs to clear the previous contents
   nodes, links = [], []
@@ -38,6 +37,7 @@ get '/processFiles' do
   # # @raw.each_with_index { |x, i| puts "#{i}: #{x}" }
   # nodes.each { |x| puts x.inspect }
   # links.each { |x| puts x.inspect }
+  FileUtils.rm_rf('uploads/.')
   { 
     :nodes => nodes,
     :links => links
