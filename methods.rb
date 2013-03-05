@@ -37,7 +37,7 @@ def parse_lgil #this needs fixing on red labelled intervention folders
         add_link(
           prev_line.split(' ')[1],
           line.split(' ')[1],
-          3,
+          1,
           "after"
         )
       end
@@ -45,7 +45,7 @@ def parse_lgil #this needs fixing on red labelled intervention folders
       add_link(
         line.split(' ')[1],
         line.split(' ').last,
-        2,
+        1,
         "show"
       )
     end
@@ -69,7 +69,7 @@ def parse_xml_file(source_name, filename)
       add_link(
         source_name,
         line.split(/label=("|')/).last.split(/("|')/).first,
-        4,
+        1,
         "div"
       )
     end
@@ -77,7 +77,7 @@ def parse_xml_file(source_name, filename)
       add_link(
         source_name,
         line.split(/\?jumpto=/).last.split(/("|')/).first,
-        5,
+        1,
         "a"
       )
     end

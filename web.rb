@@ -2,6 +2,7 @@ require 'sinatra'
 require 'json'
 require 'fileutils'
 require 'find'
+require 'iconv'
 require './classes.rb'
 require './methods.rb'
 set :environment, :development
@@ -27,7 +28,8 @@ end
 
 get '/processFiles' do
   nodes, links = [], []
-  lgil_file = File.open('uploads/' + 'intervention.lgil', "r").read.split(/\r\n/) #encoding problem occurs here
+  #gsub(/[^0-9A-z_,\.#:\|&\/\\><=()"'\r\n\t\s\-]/, '')
+  lgil_file = Iconv.new("UTF-8//IGNORE", "UTF-8").iconv(File.open('uploads/' + 'intervention.lgil', "r").read).split(/\r\n/) #encoding problem occurs here
   clean_lgil(lgil_file)
   create_nodes(nodes, links)
   parse_lgil
