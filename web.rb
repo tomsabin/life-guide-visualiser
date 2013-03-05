@@ -34,9 +34,6 @@ get '/processFiles' do
   parse_lgil
   parse_xml
   links.uniq!
-  # @raw.each_with_index { |x, i| puts "#{i}: #{x}" }
-  # nodes.each { |x| puts x.inspect }
-  # links.each { |x| puts x.inspect }
   FileUtils.rm_rf('uploads/.')
   { 
     :nodes => nodes,
