@@ -28,13 +28,13 @@ end
 
 get '/processFiles' do
   nodes, links = [], []
-  #gsub(/[^0-9A-z_,\.#:\|&\/\\><=()"'\r\n\t\s\-]/, '')
-  lgil_file = Iconv.new("UTF-8//IGNORE", "UTF-8").iconv(File.open('uploads/' + 'intervention.lgil', "r").read).split(/\r\n/) #encoding problem occurs here
+  lgil_file = Iconv.new("UTF-8//IGNORE", "UTF-8").iconv(File.open('uploads/' + 'intervention.lgil', "r").read).split(/\r\n/)
   clean_lgil(lgil_file)
   create_nodes(nodes, links)
   parse_lgil
   parse_xml
-  # # @raw.each_with_index { |x, i| puts "#{i}: #{x}" }
+  links.uniq!
+  # @raw.each_with_index { |x, i| puts "#{i}: #{x}" }
   # nodes.each { |x| puts x.inspect }
   # links.each { |x| puts x.inspect }
   FileUtils.rm_rf('uploads/.')

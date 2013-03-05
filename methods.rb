@@ -109,7 +109,6 @@ def find_node(name)
 end
 
 def add_link(source_name, target_name, value = 1, type = "none")
-  # puts "---trying to find #{source_name} (#{@nodes.index(find_node(source_name))}), to add #{target_name} (#{@nodes.index(find_node(target_name))})" if not @nodes.index(find_node(target_name))
   if not @nodes.index(find_node(target_name))
     @nodes.push(Node.new(target_name, 2))
   end
