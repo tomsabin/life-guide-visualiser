@@ -3,6 +3,7 @@
 def clean_lgil(raw)
   raw.map! { |line| line == "" ? " " : line }
   raw.delete_if { |line| line =~ /^(?:(?!show|after|begin).)+$/ }
+  raw.delete_if { |line| line =~ /\t*\s*#+.*/ }
   @raw = raw
 end
 
@@ -86,7 +87,7 @@ def a_link_token?(line)
 end
 
 def show_token?(line)
-  true if line =~ /show\s[A-z0-9_-]+/
+  true if line =~ /show\s[^\.]+(if\s.+)?$/
 end
 
 def after_token?(line)
