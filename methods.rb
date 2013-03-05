@@ -3,7 +3,7 @@
 def clean_lgil(raw)
   raw.map! { |line| line == "" ? " " : line }
   raw.delete_if { |line| line =~ /^(?:(?!show|after|begin).)+$/ }
-  raw.delete_if { |line| line =~ /\t*\s*#+.*/ }
+  raw.delete_if { |line| line =~ /^(show|after|begin)?\t*\s*#+.*/ }
   @raw = raw
 end
 
