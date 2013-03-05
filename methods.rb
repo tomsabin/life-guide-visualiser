@@ -1,9 +1,10 @@
 @raw = []
 
 def clean_lgil(raw)
-  raw.map! { |line| line == "" ? " " : line }
-  raw.delete_if { |line| line =~ /^(?:(?!show|after|begin).)+$/ }
-  raw.delete_if { |line| line =~ /^(show|after|begin)?\t*\s*#+.*/ }
+  # raw.map! { |line| line == "" ? " " : line }
+  raw.delete_if { |line| line == '' }
+  raw.delete_if { |line| line =~ /(^(?:(?!show|after|begin).)+$|^(show|after|begin)?\t*\s*#+.*)/ }
+  raw.map! { |line| line =~ /^(show|after).+(\s|\t)*#.*/ ? line.slice(0...(line.index('#'))).rstrip : line }
   @raw = raw
 end
 
