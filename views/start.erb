@@ -28,6 +28,9 @@
     <div id="file-upload">
       drag and drop an intervention folder/files here
       <!-- <input type="file" id="file" name="file" enctype="multipart/form-data" multiple /> -->
+      <div id="status">
+        <span id="current_file_progress">0</span>/<span id="total_files">0</span>
+      </div>
     </div>
     <div id="graph-container">
       <div id="graph"></div>
@@ -179,13 +182,15 @@
                   entry.file(function(file) {
                     if (file['name'].match(/.+.(lgil|xml)/)) {
                       fileCount++;
-                      console.log("f(" + fileCount + ") " + i + ": " + file['name'] + " - " + file);
+                      $('#total_files').text(fileCount);
+                      // console.log("f(" + fileCount + ") " + i + ": " + file['name'] + " - " + file);
                       var xhr = new XMLHttpRequest();
                       var upload = xhr.upload;
                       xhr.open($this.data('method') || 'POST', $this.data('url'), true);
                       xhr.onreadystatechange = function() {
                         if (xhr.readyState == 4) {
                           uploadCount++;
+                          $('#current_file_progress').text(uploadCount);
                           processResults()
                         }
                       }
@@ -200,13 +205,15 @@
             $.each(files, function ( i, file ) {
               if (file['name'].match(/.+.(lgil|xml)/)) {
                 fileCount++;
-                console.log("s(" + fileCount + ") " + i + ": " + file['name'] + " - " + file);
+                $('#total_files').text(fileCount);
+                // console.log("s(" + fileCount + ") " + i + ": " + file['name'] + " - " + file);
                 var xhr = new XMLHttpRequest();
                 var upload = xhr.upload;
                 xhr.open($this.data('method') || 'POST', $this.data('url'), true);
                 xhr.onreadystatechange = function() {
                   if (xhr.readyState == 4) {
                     uploadCount++;
+                    $('#current_file_progress').text(uploadCount);
                     processResults()
                   }
                 }
@@ -241,12 +248,13 @@
   
   <script type="text/javascript">
   //Code to read files and ajax post to server
-  //-------------------this definitely needs to wait for multiple uploads to be complete!
   function processResults() {
-    console.log('in progress: ' + uploadCount + '/' + fileCount);
+    // console.log('in progress: ' + uploadCount + '/' + fileCount);
     if (fileCount == uploadCount) {
       fileCount = 0;
       uploadCount = 0;
+      $('#total_files').text('0');
+      $('#current_file_progress').text('0');
       $("#file-upload").hide();
       $("#show-file-upload").show();
       $.get('processFiles', function(data) {
