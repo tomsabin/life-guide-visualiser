@@ -66,6 +66,9 @@
     $("#file-upload").show();
     $("#show-file-upload").hide();
     $("svg").remove();
+    $.each($('li.selected'), function() {
+      $(this).removeClass('selected')
+    });
   });
   </script>
 
