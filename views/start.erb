@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheet.css">
     <script src="d3.v3.min.js"></script>
     <script src="jquery.min.js"></script>
+
     
     <style type="text/css">
     .node {
@@ -34,6 +35,18 @@
     </div>
     <div id="graph-container">
       <div id="graph"></div>
+      <script type="text/javascript">
+      var s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      s.setAttribute("id", "svgCanvas");
+      s.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+      s.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+      s.setAttribute("version", "1.1");
+      s.setAttribute("onmouseup", "handleMouseUp(evt)");
+      s.setAttribute("onmousedown", "handleMouseDown(evt)");
+      s.setAttribute("onmousemove", "handleMouseMove(evt)");
+      document.getElementById('graph').appendChild(s);
+      </script>
+      <script src="svgpan.js"></script>
     </div>
     <div id="sidebar-container">
       <ul id="layers">
@@ -65,7 +78,7 @@
   $("#show-file-upload").click(function() {
     $("#file-upload").show();
     $("#show-file-upload").hide();
-    $("svg").remove();
+    $("g").remove();
     $.each($('li.selected'), function() {
       $(this).removeClass('selected')
     });
@@ -305,10 +318,11 @@
       .size([width, height]);
 
   function drawGraph(graph) {
-    var svg = d3.select("#graph").append("svg")
+    var svg = d3.select("svg").append("g")
+        .attr("id", "viewport")
         .attr("width", width)
-        .attr("height", height);
-  
+        .attr("height", height)
+    
     force
       .nodes(graph.nodes)
       .links(graph.links)
