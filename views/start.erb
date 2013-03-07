@@ -32,9 +32,7 @@
     <div id="show-file-upload"></div>
     <div id="show-sidebar"></div>
     <div id="file-upload">
-      <div id="upload-text" class="file-upload-text">drag and drop<br /> an intervention folder<br /> or group of files here</div>
-      <div id="drop-text" class="file-upload-text">drop to upload and process files</div>
-      <div id="uploading-text" class="file-upload-text">uploading your files, please wait</div>
+      <div id="upload-text">drag and drop<br /> an intervention folder<br /> or group of files here</div>
       <div id="progressbar"></div>
     </div>
     <ul id="sidebar">
@@ -91,6 +89,9 @@
           <span class="text">Highlight<br /><strong>a href</strong> links</span>
         </div>
       </li>
+      <li class="small-li" id="reset-graph">
+        reset graph
+      </li>
     </ul>
   </body>
 
@@ -130,6 +131,10 @@
   $("#hide-sidebar").click(function() {
     $("#sidebar").hide();
     $("#show-sidebar").show();
+  });
+  
+  $("#reset-graph").click(function() {
+    $("g").attr("transform", "matrix(1,0,0,1,0,0)");
   });
   
   $("#toggle-all").click(function() {
@@ -233,8 +238,8 @@
 
       dragEnter : function ( event ) {    
         $("#file-upload").addClass("file-over");
-        $("#upload-text").hide();
-        $("#drop-text").show();
+        $("#upload-text").html("drop to upload and process files");
+        // $("#drop-text").show();
         event.stopPropagation();
         event.preventDefault();
 
@@ -243,8 +248,9 @@
       
       dragLeave : function ( event ) {    
         $("#file-upload").removeClass("file-over");
-        $("#upload-text").show();
-        $("#drop-text").hide();
+        $("#upload-text").html("drag and drop<br /> an intervention folder<br /> or group of files here");
+        // $("#upload-text").show();
+        // $("#drop-text").hide();
         event.stopPropagation();
         event.preventDefault();
 
@@ -269,9 +275,10 @@
         var files = dataTransfer.files;
         
         if (files.length > 0) {
-          $("#drop-text").hide();
+          // $("#drop-text").hide();
           $("#progressbar").show();
-          $("#uploading-text").show();
+          $("#upload-text").html("uploading your files, please wait");
+          // $("#uploading-text").show();
           var item = dataTransfer.items[0].webkitGetAsEntry();
           if (item.isDirectory) {
             //http://blog.protonet.info/post/26894439416/html5-drag-drop-files-and-folders
@@ -283,8 +290,6 @@
                   entry.file(function(file) {
                     if (file['name'].match(/.+.(lgil|xml)/)) {
                       fileCount++;
-                      $('#total_files').text(fileCount);
-                      // console.log("f(" + fileCount + ") " + i + ": " + file['name'] + " - " + file);
                       var xhr = new XMLHttpRequest();
                       var upload = xhr.upload;
                       xhr.open($this.data('method') || 'POST', $this.data('url'), true);
@@ -308,8 +313,6 @@
             $.each(files, function ( i, file ) {
               if (file['name'].match(/.+.(lgil|xml)/)) {
                 fileCount++;
-                $('#total_files').text(fileCount);
-                // console.log("s(" + fileCount + ") " + i + ": " + file['name'] + " - " + file);
                 var xhr = new XMLHttpRequest();
                 var upload = xhr.upload;
                 xhr.open($this.data('method') || 'POST', $this.data('url'), true);
@@ -354,23 +357,20 @@
   <script type="text/javascript">
   //Code to read files and ajax post to server
   function processResults() {
-    // console.log('in progress: ' + uploadCount + '/' + fileCount);
     if (fileCount == uploadCount) {
       fileCount = 0;
       uploadCount = 0;
-      $('#total_files').text('0');
-      $('#current_file_progress').text('0');
-      $("#file-upload").hide();
       $("#progressbar").progressbar({ 
         value: 0
       });
       $("#progressbar").hide();
-      $("#uploading-text").hide();
-      $("#upload-text").show();
-      $("#sidebar").show();
-      $("#show-file-upload").show();
+      $("#upload-text").html("processing graph, please wait");
       $.get('processFiles', function(data) {
         drawGraph(JSON.parse(data));
+        $("#file-upload").hide();
+        $("#sidebar").show();
+        $("#show-file-upload").show();
+        $("#upload-text").html("drag and drop<br /> an intervention folder<br /> or group of files here");
       });
     }
   }
