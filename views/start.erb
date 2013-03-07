@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheet.css">
     <script src="d3.v3.min.js"></script>
     <script src="jquery.min.js"></script>
+    <script src="jquery-ui.min.js"></script>
     
     <style type="text/css">
     .node {
@@ -31,10 +32,10 @@
     <div id="show-file-upload"></div>
     <div id="show-sidebar"></div>
     <div id="file-upload">
-      drag and drop an intervention folder/files here
-      <div id="status">
-        <span id="current_file_progress">0</span>/<span id="total_files">0</span>
-      </div>
+      <div id="upload-text" class="file-upload-text">drag and drop<br /> an intervention folder<br /> or group of files here</div>
+      <div id="drop-text" class="file-upload-text">drop to upload and process files</div>
+      <div id="uploading-text" class="file-upload-text">uploading your files, please wait</div>
+      <div id="progressbar"></div>
     </div>
     <ul id="sidebar">
       <li class="small-li" id="hide-sidebar">
@@ -49,7 +50,7 @@
       <li id='show_link'>
         <div class="layer">
           <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="50px" height="20px">
-            <line x1="10" y1="10" x2="40" y2="10" style="stroke:rgb(255,49,0);stroke-width:2" />
+            <line x1="10" y1="10" x2="40" y2="10" style="stroke:rgb(216,0,95);stroke-width:2" />
             <circle cx="10" cy="10" r="5" stroke="white" stroke-width="1.5" fill="rgb(76, 179, 218)" />
             <circle cx="40" cy="10" r="5" stroke="white" stroke-width="1.5" fill="rgb(76, 179, 218)" />
           </svg>
@@ -60,7 +61,7 @@
       <li id='after_link'>
         <div class="layer">
           <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="50px" height="20px">
-            <line x1="10" y1="10" x2="40" y2="10" style="stroke:rgb(100,12,171);stroke-width:2" />
+            <line x1="10" y1="10" x2="40" y2="10" style="stroke:rgb(202,172,22);stroke-width:2" />
             <circle cx="10" cy="10" r="5" stroke="white" stroke-width="1.5" fill="rgb(76, 179, 218)" />
             <circle cx="40" cy="10" r="5" stroke="white" stroke-width="1.5" fill="rgb(76, 179, 218)" />
           </svg>
@@ -103,6 +104,14 @@
   $("#show-file-upload").hide();
   $("#sidebar").hide();
   $("#show-sidebar").hide();
+  $("#progressbar").hide();
+  $("#drop-text").hide();
+  $("#uploading-text").hide();
+    
+  $("#progressbar").progressbar({ 
+    value: 0
+  });
+
   $("#show-file-upload").click(function() {
     $("#file-upload").show();
     $("#show-file-upload").hide()
@@ -163,10 +172,10 @@
       $(this).addClass("selected");
       switch(this['id']) {
         case 'show_link':
-          colourLink('show', 'rgb(255,49,0)');
+          colourLink('show', 'rgb(216,0,95)');
           break;      
         case 'after_link':
-          colourLink('after', 'rgb(100,12,171)');
+          colourLink('after', 'rgb(202,172,22)');
           break;
         case 'div_link':
           colourLink('div', 'rgb(65,219,0)');
@@ -216,12 +225,26 @@
          });
 
          $this.bind('dragenter.dndUploader', methods.dragEnter);
+         $this.bind('dragleave.dndUploader', methods.dragLeave);
          $this.bind('dragover.dndUploader', methods.dragOver);
          $this.bind('drop.dndUploader', methods.drop);
        });
       },
 
       dragEnter : function ( event ) {    
+        $("#file-upload").addClass("file-over");
+        $("#upload-text").hide();
+        $("#drop-text").show();
+        event.stopPropagation();
+        event.preventDefault();
+
+        return false;
+      },
+      
+      dragLeave : function ( event ) {    
+        $("#file-upload").removeClass("file-over");
+        $("#upload-text").show();
+        $("#drop-text").hide();
         event.stopPropagation();
         event.preventDefault();
 
@@ -236,6 +259,7 @@
       },
 
       drop : function( event ) {
+        $("#file-upload").removeClass("file-over");
         event.stopPropagation();
         event.preventDefault();
         // console.log( event.originalEvent.dataTransfer.files );
@@ -245,6 +269,9 @@
         var files = dataTransfer.files;
         
         if (files.length > 0) {
+          $("#drop-text").hide();
+          $("#progressbar").show();
+          $("#uploading-text").show();
           var item = dataTransfer.items[0].webkitGetAsEntry();
           if (item.isDirectory) {
             //http://blog.protonet.info/post/26894439416/html5-drag-drop-files-and-folders
@@ -264,7 +291,9 @@
                       xhr.onreadystatechange = function() {
                         if (xhr.readyState == 4) {
                           uploadCount++;
-                          $('#current_file_progress').text(uploadCount);
+                          $("#progressbar").progressbar({ 
+                            value: uploadCount / fileCount * 100
+                          });
                           processResults()
                         }
                       }
@@ -287,7 +316,9 @@
                 xhr.onreadystatechange = function() {
                   if (xhr.readyState == 4) {
                     uploadCount++;
-                    $('#current_file_progress').text(uploadCount);
+                    $("#progressbar").progressbar({ 
+                      value: uploadCount / fileCount * 100
+                    });
                     processResults()
                   }
                 }
@@ -330,6 +361,12 @@
       $('#total_files').text('0');
       $('#current_file_progress').text('0');
       $("#file-upload").hide();
+      $("#progressbar").progressbar({ 
+        value: 0
+      });
+      $("#progressbar").hide();
+      $("#uploading-text").hide();
+      $("#upload-text").show();
       $("#sidebar").show();
       $("#show-file-upload").show();
       $.get('processFiles', function(data) {
