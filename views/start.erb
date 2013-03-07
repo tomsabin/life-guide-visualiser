@@ -6,7 +6,6 @@
     <link rel="stylesheet" type="text/css" href="stylesheet.css">
     <script src="d3.v3.min.js"></script>
     <script src="jquery.min.js"></script>
-
     
     <style type="text/css">
     .node {
@@ -25,28 +24,16 @@
     </style>
   </head>
   <body>
+    <svg id="svgCanvas" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" onmouseup="handleMouseUp(evt)" onmousedown="handleMouseDown(evt)" onmousemove="handleMouseMove(evt)">
+      <g id="viewport"></g>
+    </svg>
+    <script src="svgpan.js"></script>
     <div id="show-file-upload"></div>
     <div id="file-upload">
       drag and drop an intervention folder/files here
-      <!-- <input type="file" id="file" name="file" enctype="multipart/form-data" multiple /> -->
       <div id="status">
         <span id="current_file_progress">0</span>/<span id="total_files">0</span>
       </div>
-    </div>
-    <div id="graph-container">
-      <div id="graph"></div>
-      <script type="text/javascript">
-      var s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      s.setAttribute("id", "svgCanvas");
-      s.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-      s.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
-      s.setAttribute("version", "1.1");
-      s.setAttribute("onmouseup", "handleMouseUp(evt)");
-      s.setAttribute("onmousedown", "handleMouseDown(evt)");
-      s.setAttribute("onmousemove", "handleMouseMove(evt)");
-      document.getElementById('graph').appendChild(s);
-      </script>
-      <script src="svgpan.js"></script>
     </div>
     <div id="sidebar-container">
       <ul id="layers">
@@ -62,29 +49,25 @@
       </ul>
     </div>
   </body>
-   <script type="text/javascript">
+
+  <script type="text/javascript">
   //styling JS
-  var graphWidth =$(window).width()-150;
-  var graphHeight =$(window).height()-20;
   $("#sidebar-container").height($(window).height());
   $("#layers").height($(window).height());
   $("#file-upload").css("top", $(window).height()/2-100);
   $("#file-upload").css("left", $(window).width()/2-200);
-  $("#graph-container").width(graphWidth);
-  $("#graph").width(graphWidth);
-  $("#graph").height(graphHeight);
 
   $("#show-file-upload").hide();
   $("#show-file-upload").click(function() {
     $("#file-upload").show();
     $("#show-file-upload").hide();
-    $("g").remove();
+    $("g").empty();
     $.each($('li.selected'), function() {
       $(this).removeClass('selected')
     });
   });
   </script>
-
+  
   <script type="text/javascript">
   //layers
   $("li").click(function() {
@@ -307,8 +290,8 @@
 
   //Code to produce tree
   //http://bl.ocks.org/4062045
-  var width = graphWidth,
-      height = graphHeight;
+  var width = $(window).width(),
+      height = $(window).height();
 
   var color = d3.scale.category20();
 
@@ -318,8 +301,7 @@
       .size([width, height]);
 
   function drawGraph(graph) {
-    var svg = d3.select("svg").append("g")
-        .attr("id", "viewport")
+    var svg = d3.select("g")
         .attr("width", width)
         .attr("height", height)
     
