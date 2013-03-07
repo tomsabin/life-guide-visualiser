@@ -377,24 +377,29 @@
   </script>
 
   <script type="text/javascript">
+  var cursorX, cursorY;
+  
+  function recordMouse(e) {
+    cursorX = e.clientX;
+    cursorY = e.clientY;
+  }
+  
+  document.addEventListener("mousemove", recordMouse, false);
+  
   function showInformation(obj, node) {
+
     var top, left;
-    $("#graph").append("<div id='graph-tooltip'>");
+    $("body").append("<div id='graph-tooltip'></div>");
     if (node) {
       $('#graph-tooltip').append("Node name: " + obj['name']);
-      top = obj['y'] - 10;
-      left = obj['x'] + 10;
     } else {
       var sourceNode = obj["source"];
       var targetNode = obj["target"];
       $('#graph-tooltip').append("Link value: " + obj['value']);
-      top = (sourceNode['y'] + targetNode['y']) / 2 - 10;
-      left = (sourceNode['x'] + targetNode['x']) / 2 + 10;
     }
-    $("#graph").append("</div>");
 
-    $('#graph-tooltip').css("top", top+"px");
-    $('#graph-tooltip').css("left", left+"px");
+    $('#graph-tooltip').css("top", cursorY+"px");
+    $('#graph-tooltip').css("left", cursorX+"px");
   }
 
   function hideInformation(obj) {
