@@ -73,7 +73,7 @@ def parse_xml_file(source_name, filename)
         source_name,
         line.split(/\?jumpto=/).last.split(/("|')/).first,
         1,
-        "a"
+        "a_href"
       )
     end
   end

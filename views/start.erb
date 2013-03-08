@@ -10,7 +10,7 @@
     
     <style type="text/css">
     .node {
-      stroke: #fff;
+      stroke: #eee;
       stroke-width: 1.5px;
     }
 
@@ -78,7 +78,7 @@
           <span class="text">Highlight<br /><strong>div</strong> links</span>
         </div>
       </li>
-      <li id='a_link'>
+      <li id='a_href_link'>
         <div class="layer">
           <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="50px" height="20px">
             <line x1="10" y1="10" x2="40" y2="10" style="stroke:rgb(12,93,165);stroke-width:2" />
@@ -169,8 +169,8 @@
         case 'div_link':
           resetLink('div');
           break;
-        case 'a_link':
-          resetLink('a');
+        case 'a_href_link':
+          resetLink('a_href');
           break;
       }
     } else {
@@ -185,8 +185,8 @@
         case 'div_link':
           colourLink('div', 'rgb(65,219,0)');
           break;
-        case 'a_link':
-          colourLink('a', 'rgb(12,93,165)');
+        case 'a_href_link':
+          colourLink('a_href', 'rgb(12,93,165)');
           break;
         default:
           $(this).removeClass("selected");
@@ -378,6 +378,7 @@
 
   <script type="text/javascript">
   var cursorX, cursorY;
+  var color = d3.scale.category20();
   
   function recordMouse(e) {
     cursorX = e.clientX;
@@ -387,22 +388,31 @@
   document.addEventListener("mousemove", recordMouse, false);
   
   function showInformation(obj, node) {
-
-    var top, left;
     $("body").append("<div id='graph-tooltip'></div>");
     if (node) {
       $('#graph-tooltip').append("Node name: " + obj['name']);
+      $('#graph-tooltip').append("<br />Connected nodes: " + obj['connected_nodes']);
     } else {
-      var sourceNode = obj["source"];
-      var targetNode = obj["target"];
-      $('#graph-tooltip').append("Link value: " + obj['value']);
+      $('#graph-tooltip').append("Source node: " + obj['source']['name']);
+      $('#graph-tooltip').append("<br />Target node: " + obj['target']['name']);
+      $('#graph-tooltip').append("<br />Link value: " + obj['value']);
+      $('#graph-tooltip').append("<br />Link type: " + obj['type']);
+      source_original_styling = $('#nodeid_'+obj['source']['name']).attr("style");
+      $('#nodeid_'+obj['source']['name']).attr("style", source_original_styling+"stroke:rgb(76, 179, 218);");
+      source_original_styling = $('#nodeid_'+obj['target']['name']).attr("style");
+      $('#nodeid_'+obj['target']['name']).attr("style", source_original_styling+"stroke:rgb(76, 179, 218);");
     }
-
     $('#graph-tooltip').css("top", cursorY+"px");
     $('#graph-tooltip').css("left", cursorX+"px");
   }
 
-  function hideInformation(obj) {
+  function hideInformation(obj, node) {
+    if (!node) {
+      source_original_styling = "fill:"+color(obj['source']['group'])+";stroke:#eee;"
+      target_original_styling = "fill:"+color(obj['target']['group'])+";stroke:#eee;"
+      $('#nodeid_'+obj['source']['name']).attr("style", source_original_styling);
+      $('#nodeid_'+obj['target']['name']).attr("style", target_original_styling);
+    }
     $('#graph-tooltip').remove();
   }
 
@@ -410,8 +420,6 @@
   //http://bl.ocks.org/4062045
   var width = $(window).width()-150,
       height = $(window).height()-50;
-
-  var color = d3.scale.category20();
 
   var force = d3.layout.force()
       .charge(-120)
@@ -437,22 +445,24 @@
       .on("mouseout", function(d) { hideInformation(d, false); })
       .style("stroke-width", function(d) { return Math.sqrt(d.value); });
     
-    link.append("title")
-      .text(function(d) { return d.value; })
+    // link.append("title")
+    //   .text(function(d) { return d.value; })
 
-      var foo;
     var node = svg.selectAll(".node")
       .data(graph.nodes)
       .enter().append("circle")
       .attr("class", "node")
       .attr("r", 5)
+      .attr("id", function(d) { return "nodeid_" + d.name })
       .style("fill", function(d) { return color(d.group); })
       .on("mouseover", function(d) { showInformation(d, true); })
       .on("mouseout", function(d) { hideInformation(d, true); })
       .call(force.drag);
 
-    node.append("page")
-      .text(function(d) { return d.name; });
+    // node.append("page")
+      // .text(function(d) {  return d.name; });
+    // node.append("connected_nodes")
+    //   .text(function(d) { return d.connected_nodes; });
 
     force.on("tick", function() {
       link.attr("x1", function(d) { return d.source.x; })

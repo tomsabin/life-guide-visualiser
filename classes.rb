@@ -4,7 +4,7 @@ class Node
   def initialize(name, group)
     @name = name
     @group = group
-    @connected_vetices = []
+    @connected_nodes = []
   end
   
   def name
@@ -12,13 +12,14 @@ class Node
   end
   
   def add_node(name)
-    @connected_vetices.push(name) #name of node is unique
+    @connected_nodes.push(name) #name of node is unique
   end
   
   def to_json(*a)
     {
       'name' => @name,
-      'group' => @group
+      'group' => @group,
+      'connected_nodes' => @connected_nodes
     }.to_json(*a)
   end
 
