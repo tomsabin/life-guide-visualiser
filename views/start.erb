@@ -446,6 +446,7 @@
       }
       $.each(obj['connected_nodes'], function(index, obj) {
         $("#nodeid_"+obj).attr('class', 'node node_hover');
+        console.log(obj);
         if (showTooltip) {
           $('#graph-tooltip').append("<li>"+obj+"</li>");
         }
@@ -509,6 +510,7 @@
       .enter().append("line")
       .attr("class", "link")
       .attr("type", function(d) { return d.type })
+      .attr("belongs_to", function(d) { return d.source.name + " " + d.target.name })
       .on("mouseover", function(d) { showInformation(d, false); })
       .on("mouseout", function(d) { hideInformation(d, false); })
       .style("stroke-width", function(d) { return Math.sqrt(d.value); });
