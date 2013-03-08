@@ -22,6 +22,21 @@
     .node:hover, .link:hover {
       stroke: rgb(76, 179, 218);
     }
+    
+    .show_link {
+      stroke: rgb(216,0,95);
+    }
+
+    .after_link {
+      stroke: rgb(202,172,22);
+    }
+
+    .div_link {
+      stroke: rgb(65,219,0);
+    }
+    .a_href_link {
+      stroke: rgb(12,93,165);
+    }
     </style>
   </head>
   <body>
@@ -177,16 +192,16 @@
       $(this).addClass("selected");
       switch(this['id']) {
         case 'show_link':
-          colourLink('show', 'rgb(216,0,95)');
+          colourLink('show');
           break;      
         case 'after_link':
-          colourLink('after', 'rgb(202,172,22)');
+          colourLink('after');
           break;
         case 'div_link':
-          colourLink('div', 'rgb(65,219,0)');
+          colourLink('div');
           break;
         case 'a_href_link':
-          colourLink('a_href', 'rgb(12,93,165)');
+          colourLink('a_href');
           break;
         default:
           $(this).removeClass("selected");
@@ -195,10 +210,26 @@
     }
   });
   
-  function colourLink(type, colour) {
+  function colourLink(type) {
     $.each($('line'), function(index, value) {
       if (this.getAttribute('type') == type) {
-        this.style['stroke'] = colour;
+        switch(type) {
+          case 'show':
+            this.setAttribute("class", "link show_link");
+            break;
+          case 'after':
+            this.setAttribute("class", "link after_link");
+            break;
+          case 'div':
+            this.setAttribute("class", "link div_link");
+            break;
+          case 'a_href':
+            this.setAttribute("class", "link a_href_link");
+            break;
+          default:
+            this.setAttribute("class", "link");
+            break;
+        }
       }
     });
   }
@@ -206,7 +237,7 @@
   function resetLink(type) {
     $.each($('line'), function(index, value) {
       if (this.getAttribute('type') == type) {
-        this.style['stroke'] = "#999";
+        this.setAttribute("class", "link");
       }
     });
   }
@@ -390,13 +421,13 @@
   function showInformation(obj, node) {
     $("body").append("<div id='graph-tooltip'></div>");
     if (node) {
-      $('#graph-tooltip').append("Node name: " + obj['name']);
-      $('#graph-tooltip').append("<br />Connected nodes: " + obj['connected_nodes']);
+      $('#graph-tooltip').append("<span class='tooltip_title'>Node name:</span> " + obj['name']);
+      $('#graph-tooltip').append("<br /><span class='tooltip_title'>Connected nodes:</span> " + obj['connected_nodes']);
     } else {
-      $('#graph-tooltip').append("Source node: " + obj['source']['name']);
-      $('#graph-tooltip').append("<br />Target node: " + obj['target']['name']);
-      $('#graph-tooltip').append("<br />Link value: " + obj['value']);
-      $('#graph-tooltip').append("<br />Link type: " + obj['type']);
+      $('#graph-tooltip').append("<span class='tooltip_title'>Source node:</span> " + obj['source']['name']);
+      $('#graph-tooltip').append("<br /><span class='tooltip_title'>Target node:</span> " + obj['target']['name']);
+      $('#graph-tooltip').append("<br /><span class='tooltip_title'>Link value:</span> " + obj['value']);
+      $('#graph-tooltip').append("<br /><span class='tooltip_title'>Link type:</span> " + obj['type']);
       source_original_styling = $('#nodeid_'+obj['source']['name']).attr("style");
       $('#nodeid_'+obj['source']['name']).attr("style", source_original_styling+"stroke:rgb(76, 179, 218);");
       source_original_styling = $('#nodeid_'+obj['target']['name']).attr("style");

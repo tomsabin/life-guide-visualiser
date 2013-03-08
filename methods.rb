@@ -108,6 +108,7 @@ def add_link(source_name, target_name, value = 1, type = "none")
     @nodes.push(Node.new(target_name, 2))
   end
   find_node(source_name).add_node(target_name)
+  find_node(target_name).add_node(source_name)
   @links.push( {
     :source => @nodes.index(find_node(source_name)),
     :target => @nodes.index(find_node(target_name)),

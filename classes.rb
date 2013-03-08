@@ -13,6 +13,7 @@ class Node
   
   def add_node(name)
     @connected_nodes.push(name) #name of node is unique
+    @connected_nodes.uniq!
   end
   
   def to_json(*a)
