@@ -14,6 +14,10 @@
       stroke-width: 1.5px;
     }
 
+    .node_hover {
+      stroke: rgb(76, 179, 218);
+    }
+
     .link {
       stroke: #999;
       stroke-opacity: .6;
@@ -104,6 +108,9 @@
           <span class="text">Highlight<br /><strong>a href</strong> links</span>
         </div>
       </li>
+      <li class="ex-small-li selected" id="toggle-tooltip">
+        hover tooltip
+      </li>
       <li class="small-li" id="reset-graph">
         reset graph
       </li>
@@ -136,6 +143,8 @@
     $.each($('li.selected'), function() {
       $(this).removeClass('selected')
     });
+    $("#toggle-tooltip").attr("class", "ex-small-li selected");
+    showTooltip = true;
   });
   
   $("#show-sidebar").click(function() {
@@ -187,6 +196,9 @@
         case 'a_href_link':
           resetLink('a_href');
           break;
+        case 'toggle-tooltip':
+          showTooltip = !showTooltip;
+          break;
       }
     } else {
       $(this).addClass("selected");
@@ -203,12 +215,17 @@
         case 'a_href_link':
           colourLink('a_href');
           break;
+        case 'toggle-tooltip':
+          showTooltip = !showTooltip;
+          break;
         default:
           $(this).removeClass("selected");
           break;
       }
     }
   });
+  
+  $("#toggle-tooltip").trigger();
   
   function colourLink(type) {
     $.each($('line'), function(index, value) {
@@ -408,6 +425,7 @@
   </script>
 
   <script type="text/javascript">
+  var showTooltip = true;
   var cursorX, cursorY;
   var color = d3.scale.category20();
   
@@ -419,32 +437,53 @@
   document.addEventListener("mousemove", recordMouse, false);
   
   function showInformation(obj, node) {
-    $("body").append("<div id='graph-tooltip'></div>");
-    if (node) {
-      $('#graph-tooltip').append("<span class='tooltip_title'>Node name:</span> " + obj['name']);
-      $('#graph-tooltip').append("<br /><span class='tooltip_title'>Connected nodes:</span> " + obj['connected_nodes']);
-    } else {
-      $('#graph-tooltip').append("<span class='tooltip_title'>Source node:</span> " + obj['source']['name']);
-      $('#graph-tooltip').append("<br /><span class='tooltip_title'>Target node:</span> " + obj['target']['name']);
-      $('#graph-tooltip').append("<br /><span class='tooltip_title'>Link value:</span> " + obj['value']);
-      $('#graph-tooltip').append("<br /><span class='tooltip_title'>Link type:</span> " + obj['type']);
-      source_original_styling = $('#nodeid_'+obj['source']['name']).attr("style");
-      $('#nodeid_'+obj['source']['name']).attr("style", source_original_styling+"stroke:rgb(76, 179, 218);");
-      source_original_styling = $('#nodeid_'+obj['target']['name']).attr("style");
-      $('#nodeid_'+obj['target']['name']).attr("style", source_original_styling+"stroke:rgb(76, 179, 218);");
+    //inefficient checking.. woo!
+    if (showTooltip) {
+      $("body").append("<div id='graph-tooltip'></div>");
     }
-    $('#graph-tooltip').css("top", cursorY+"px");
-    $('#graph-tooltip').css("left", cursorX+"px");
+    if (node) {
+      if (showTooltip) {
+        $('#graph-tooltip').append("<span class='tooltip_title'>Node name:</span> " + obj['name']);
+        $('#graph-tooltip').append("<br /><span class='tooltip_title'>Connected nodes:</span><ul>");
+      }
+      $.each(obj['connected_nodes'], function(index, obj) {
+        $("#nodeid_"+obj).attr('class', 'node node_hover');
+        if (showTooltip) {
+          $('#graph-tooltip').append("<li>"+obj+"</li>");
+        }
+      });
+      if (showTooltip) {
+        $('#graph-tooltip').append("</ul>");
+      }
+    } else {
+      if (showTooltip) {
+        $('#graph-tooltip').append("<span class='tooltip_title'>Source node:</span> " + obj['source']['name']);
+        $('#graph-tooltip').append("<br /><span class='tooltip_title'>Target node:</span> " + obj['target']['name']);
+        $('#graph-tooltip').append("<br /><span class='tooltip_title'>Link type:</span> " + obj['type']);
+        $('#graph-tooltip').append("<br /><span class='tooltip_title'>Link value:</span> " + obj['value']);
+      }
+      $('#nodeid_'+obj['source']['name']).attr("class", "node node_hover");
+      $('#nodeid_'+obj['target']['name']).attr("class", "node node_hover");
+    }
+    if (showTooltip) {
+      $('#graph-tooltip').css("top", cursorY+"px");
+      $('#graph-tooltip').css("left", cursorX+"px");
+    }
   }
 
   function hideInformation(obj, node) {
-    if (!node) {
-      source_original_styling = "fill:"+color(obj['source']['group'])+";stroke:#eee;"
-      target_original_styling = "fill:"+color(obj['target']['group'])+";stroke:#eee;"
-      $('#nodeid_'+obj['source']['name']).attr("style", source_original_styling);
-      $('#nodeid_'+obj['target']['name']).attr("style", target_original_styling);
+    if (node) {
+      $.each(obj['connected_nodes'], function(index, obj) {
+        $("#nodeid_"+obj).attr('class', 'node');
+        $('#graph-tooltip').append("<li>"+obj+"</li>");
+      });
+    } else {
+      $('#nodeid_'+obj['source']['name']).attr("class", "node");
+      $('#nodeid_'+obj['target']['name']).attr("class", "node");
     }
-    $('#graph-tooltip').remove();
+    if (showTooltip) {
+      $('#graph-tooltip').remove();
+    }
   }
 
   //Code to produce tree

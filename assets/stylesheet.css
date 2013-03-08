@@ -82,7 +82,7 @@ body {
   background-color: #0d0d0d;
 }
 
-li {
+#sidebar li {
   width: 150px;
   height: 150px;
   text-align: center;
@@ -91,25 +91,25 @@ li {
   color: white;
 }
 
-.small-li {
+#sidebar .small-li, #sidebar .ex-small-li {
   height: 50px;
   line-height: 50px;
   text-transform: uppercase;
   font-size: 12px;
 }
 
-li:hover {
+#sidebar li:hover {
   background-color: rgb(76, 179, 218);
   color: white;
   cursor: pointer;
 }
 
-.layer {
+#sidebar .layer {
   padding-top: 45px;
   height: 150px;
 }
 
-.selected {
+#sidebar .selected {
   background-color: rgb(76, 179, 218);
 }
 
