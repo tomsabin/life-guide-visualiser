@@ -29,6 +29,7 @@ class Node
     {
       'name' => @name,
       'group' => @group,
+      'group_name' => @group_name,
       'connected_nodes' => @connected_nodes
     }.to_json(*a)
   end

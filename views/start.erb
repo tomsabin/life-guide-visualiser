@@ -449,6 +449,9 @@
     if (node) {
       if (showTooltip) {
         $('#graph-tooltip').append("<span class='tooltip_title'>Node name:</span> " + obj['name']);
+        if (obj['group_name'] != '') {
+          $('#graph-tooltip').append("<br /><span class='tooltip_title'>Group name:</span> " + obj['group_name']); 
+        }
         $('#graph-tooltip').append("<br /><span class='tooltip_title'>Connected nodes:</span><ul>");
       }
       $.each($('line'), function (index, line) {
@@ -546,6 +549,7 @@
       .attr("class", "node")
       .attr("r", 5)
       .attr("id", function(d) { return "nodeid_" + d.name })
+      .attr("group_name", function(d) { return d.group_name })
       .style("fill", function(d) { return color(d.group); })
       .on("mouseover", function(d) { showInformation(d, true); })
       .on("mouseout", function(d) { hideInformation(d, true); })
