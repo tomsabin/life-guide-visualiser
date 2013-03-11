@@ -3,7 +3,7 @@
 def clean_lgil(raw)
   # raw.map! { |line| line == "" ? " " : line }
   raw.delete_if { |line| line == '' }
-  raw.delete_if { |line| line =~ /(^(?:(?!show|after|begin).)+$|^(show|after|begin)?\t*\s*#+.*)/ }
+  raw.delete_if { |line| line =~ /(^(?:(?!(show\s[^\.]+(if\s.+)?$)|after).)+$|^((show\s[^\.]+(if\s.+)?$)|after)?\t*\s*#+.*)/ }
   raw.map! { |line| line =~ /^(show|after).+(\s|\t)*#.*/ ? line.slice(0...(line.index('#'))).rstrip : line }
   @raw = raw
 end
@@ -13,8 +13,9 @@ def create_nodes(nodes, links)
   @raw.each do |line|
     if show_token?(line)
       @nodes.push(Node.new(line.split(' ')[1], 0))
-    elsif section_token?(line)
-      @nodes.push(Node.new(line.split(' ')[2], 1))
+    # sections need defininig properly and nodes to not be added
+    # elsif section_token?(line)
+    #   @nodes.push(Node.new(line.split(' ')[2], 1))
     end
   end
 end
@@ -92,7 +93,7 @@ def show_token?(line)
 end
 
 def after_token?(line)
-  true if line =~ /after\s.*\sif\s((isempty|and|or)\s)?\(.*\)\sgoto\s(.*)/
+  true if line =~ /after\s.*\sif\s((isempty|and|or)\s)?\(.*\)\s?goto\s(.*)/
 end
 
 def section_token?(line)
