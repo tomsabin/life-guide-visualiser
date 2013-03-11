@@ -19,7 +19,7 @@ end
 
 def find_sections(nodes)
   sections = []
-  group_int = 1
+  group_int = 3
   @raw.count { |line| line =~ /begin\ssection.*/ }.times do
     find_section(sections)
   end
