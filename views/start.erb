@@ -438,6 +438,8 @@
   
   document.addEventListener("mousemove", recordMouse, false);
   
+  var prev_link_attributes = [];
+  
   function showInformation(obj, node) {
     //inefficient checking.. woo!
     if (showTooltip) {
@@ -451,6 +453,7 @@
       $.each($('line'), function (index, line) {
         if (line.getAttribute('belongs_to')) {
           if ($.inArray(obj['name'], line.getAttribute('belongs_to').split(' ')) !== -1) {
+            prev_link_attributes.push($(line).attr('class'));
             $(line).attr('class', 'link link_hover');
           }
         }
@@ -481,13 +484,18 @@
   }
 
   function hideInformation(obj, node) {
+    prev_link_attributes.reverse();
     if (node) {
       $.each(obj['connected_nodes'], function(index, obj) {
         $("#nodeid_"+obj).attr('class', 'node');
         $('#graph-tooltip').append("<li>"+obj+"</li>");
       });
       $.each($('line'), function (index, line) {
-        $(line).attr('class', 'link');
+        if (line.getAttribute('belongs_to')) {
+          if ($.inArray(obj['name'], line.getAttribute('belongs_to').split(' ')) !== -1) {
+            $(line).attr('class', prev_link_attributes.pop());
+          }
+        }
       });
     } else {
       $('#nodeid_'+obj['source']['name']).attr("class", "node");
