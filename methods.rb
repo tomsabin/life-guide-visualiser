@@ -3,7 +3,7 @@
 def clean_lgil(raw)
   # raw.map! { |line| line == "" ? " " : line }
   raw.delete_if { |line| line == '' }
-  raw.delete_if { |line| line =~ /(^(?:(?!(show\s[^\.]+(if\s.+)?$)|after).)+$|^((show\s[^\.]+(if\s.+)?$)|after)?\t*\s*#+.*)/ }
+  raw.delete_if { |line| line =~ /(^(?:(?!(show\s[^\.]+(if\s.+)?$)|after|begin|end).)+$|^((show\s[^\.]+(if\s.+)?$)|after|begin|end)?\t*\s*#+.*)/ }
   raw.map! { |line| line =~ /^(show|after).+(\s|\t)*#.*/ ? line.slice(0...(line.index('#'))).rstrip : line }
   @raw = raw
 end
@@ -13,11 +13,37 @@ def create_nodes(nodes, links)
   @raw.each do |line|
     if show_token?(line)
       @nodes.push(Node.new(line.split(' ')[1], 0))
-    # sections need defininig properly and nodes to not be added
-    # elsif section_token?(line)
-    #   @nodes.push(Node.new(line.split(' ')[2], 1))
     end
   end
+end
+
+def find_sections(nodes)
+  sections = []
+  group_int = 1
+  @raw.count { |line| line =~ /begin\ssection.*/ }.times do
+    find_section(sections)
+  end
+  sections.each do |section|
+    temp_raw = @raw[section[:begin_index]..section[:end_index]]
+    temp_raw.each do |line|
+      if find_node(line.split(' ')[1])
+        find_node(line.split(' ')[1]).add_group(section[:section_name])
+        find_node(line.split(' ')[1]).change_group_colour(group_int)
+      end
+    end
+    group_int += 1
+  end
+  @raw.delete_if { |line| line == 'deleteme' }
+end
+
+def find_section(arr)
+  arr.push({
+    :section_name => @raw.find { |line| line =~ /begin\ssection.*/ }.split(' ')[2],
+    :begin_index => @raw.find_index { |line| line =~ /begin\ssection.*/ } + 1,
+    :end_index => @raw.find_index { |line| line =~ /end\ssection.*/ } - 1
+  })
+  @raw[@raw.find_index { |line| line =~ /begin\ssection.*/ }] = 'deleteme'
+  @raw[@raw.find_index { |line| line =~ /end\ssection.*/ }] = 'deleteme'
 end
 
 def parse_lgil

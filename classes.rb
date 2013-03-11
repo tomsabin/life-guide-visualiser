@@ -4,11 +4,20 @@ class Node
   def initialize(name, group)
     @name = name
     @group = group
+    @group_name = ''
     @connected_nodes = []
   end
   
   def name
     @name
+  end
+  
+  def add_group(group_name)
+    @group_name = group_name
+  end
+  
+  def change_group_colour(int)
+    @group = int
   end
   
   def add_node(name)

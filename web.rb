@@ -31,10 +31,11 @@ get '/processFiles' do
   lgil_file = Iconv.new("UTF-8//IGNORE", "UTF-8").iconv(File.open('uploads/' + 'intervention.lgil', "r").read).split(/\r\n/)
   clean_lgil(lgil_file)
   create_nodes(nodes, links)
+  find_sections(nodes)
   parse_lgil
   parse_xml
   links.uniq!
-  # nodes.each { |x| puts x.inspect }
+  nodes.each { |x| puts x.inspect }
   # links.each { |x| puts x.inspect }
   FileUtils.rm_rf('uploads/.')
   { 
