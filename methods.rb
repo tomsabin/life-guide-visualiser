@@ -95,12 +95,12 @@ def parse_xml_file(source_name, filename)
         "div"
       )
     end
-    if a_link_token?(line)
+    if jumpto_link_token?(line)
       add_link(
         source_name,
         line.split(/\?jumpto=/).last.split(/("|')/).first,
         1,
-        "a_href"
+        "jumpto"
       )
     end
   end
@@ -110,7 +110,7 @@ def div_link_token?(line)
   true if line =~ /<div.*id=("|')button-[A-z0-9_-]*("|').*class=("|')submit-jumpto-button("|').*label=("|')[A-z0-9_-]*("|').*/
 end
 
-def a_link_token?(line)
+def jumpto_link_token?(line)
   true if line =~ /<a.*href=("|')\?jumpto=[A-z0-9_-]*("|').*/
 end
 
