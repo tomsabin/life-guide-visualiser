@@ -1,13 +1,10 @@
 @raw = []
 
 def clean_lgil(raw)
-  # raw.map! { |line| line == "" ? " " : line }
   raw.delete_if { |line| line == '' }
-  # raw.delete_if { |line| line =~ /(^(?:(?!(show\s[^\.]+(if\s.+)?$)|after|begin|end).)+$|^((show\s[^\.]+(if\s.+)?$)|after|begin|end)?\t*\s*#+.*)/ }
   raw.keep_if { |line| line =~ /^(show\s[^\.]+(if\s.+)?$|after.+$|begin.+$|end.+$)/ }
   raw.map! { |line| line =~ /^(show|after).+(\s|\t)*#.*/ ? line.slice(0...(line.index('#'))).rstrip : line }
   @raw = raw
-  # puts @raw
 end
 
 def create_nodes(nodes, links)
@@ -22,8 +19,8 @@ end
 def find_sections(nodes)
   @sections = []
   group_int = 3
-  @raw.count { |line| line =~ /begin\ssection.*/ }.times do
-  # @raw.count { |line| line =~ /begin(\ssection)?.*/ }.times do
+  # @raw.count { |line| line =~ /begin\ssection.*/ }.times do #<--- bug here
+  @raw.count { |line| line =~ /begin(\ssection)?.*/ }.times do #<--- bug here
     find_section(@sections)
   end
   @sections.each do |section|
@@ -37,8 +34,6 @@ def find_sections(nodes)
     group_int += 1
   end
   @raw.delete_if { |line| line == 'deleteme' }
-  # puts @sections
-  # puts @raw[680..720]
 end
 
 def find_section(arr)
