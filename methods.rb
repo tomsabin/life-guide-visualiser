@@ -18,12 +18,12 @@ def create_nodes(nodes, links)
 end
 
 def find_sections(nodes)
-  sections = []
+  @sections = []
   group_int = 3
   @raw.count { |line| line =~ /begin\ssection.*/ }.times do
-    find_section(sections)
+    find_section(@sections)
   end
-  sections.each do |section|
+  @sections.each do |section|
     temp_raw = @raw[section[:begin_index]..section[:end_index]]
     temp_raw.each do |line|
       if find_node(line.split(' ')[1])
@@ -130,9 +130,18 @@ def find_node(name)
   @nodes.find { |node| node.name if node.name == name }
 end
 
+def is_section?(name)
+  @nodes.find { |node| true if node.group_name == name }
+end
+
 def add_link(source_name, target_name, value = 1, type = "none")
   if not @nodes.index(find_node(target_name))
-    @nodes.push(Node.new(target_name, 2))
+    if is_section?(target_name)
+      node = @nodes.find { |node| node if node.group_name == target_name }
+      target_name = node.name
+    else
+      @nodes.push(Node.new(target_name, 2))
+    end
   end
   find_node(source_name).add_node(target_name)
   find_node(target_name).add_node(source_name)

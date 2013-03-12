@@ -12,6 +12,10 @@ class Node
     @name
   end
   
+  def group_name
+    @group_name
+  end
+  
   def add_group(group_name)
     @group_name = group_name
   end
