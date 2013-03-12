@@ -22,7 +22,8 @@ end
 def find_sections(nodes)
   @sections = []
   group_int = 3
-  @raw.count { |line| line =~ /begin(\ssection)?.*/ }.times do
+  @raw.count { |line| line =~ /begin\ssection.*/ }.times do
+  # @raw.count { |line| line =~ /begin(\ssection)?.*/ }.times do
     find_section(@sections)
   end
   @sections.each do |section|
@@ -43,7 +44,7 @@ end
 def find_section(arr)
   section_name = @raw.find { |line| line =~ /begin(\ssection)?.*/ }
   arr.push({
-    :section_name => section_name =~ /begin\ssection.*/ ? section_name.split(' ')[2] : section_name.split(' ')[1],
+    :section_name => section_name =~ /begin(\ssection)?.*/ ? section_name.split(' ')[2] : section_name.split(' ')[1],
     :begin_index => @raw.find_index { |line| line =~ /begin(\ssection)?.*/ } + 1,
     :end_index => @raw.find_index { |line| line =~ /end(\ssection)?.*/ } - 1
   })
