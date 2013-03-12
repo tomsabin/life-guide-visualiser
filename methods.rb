@@ -19,10 +19,9 @@ end
 def find_sections(nodes)
   @sections = []
   group_int = 3
-  # @raw.count { |line| line =~ /begin\ssection.*/ }.times do #<--- bug here
-  @raw.count { |line| line =~ /begin(\ssection)?.*/ }.times do #<--- bug here
-    find_section(@sections)
-  end
+  begin_count = @raw.count { |line| line =~ /begin(\ssection)?.*/ }
+  end_count = @raw.count { |line| line =~ /end(\ssection)?.*/ }
+  begin_count.times { find_section(@sections) } if begin_count == end_count
   @sections.each do |section|
     temp_raw = @raw[section[:begin_index]..section[:end_index]]
     temp_raw.each do |line|
