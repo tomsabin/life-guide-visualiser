@@ -20,30 +20,37 @@
 
     .link {
       stroke: #999;
-      stroke-opacity: .6;
+      stroke-opacity: .3;
     }
     
     .link_hover {
       stroke: rgb(76, 179, 218);
+      stroke-opacity: .6;
     }
     
     .node:hover, .link:hover {
       stroke: rgb(76, 179, 218);
+      stroke-opacity: .6;
     }
     
     .show_link {
       stroke: rgb(216,0,95);
+      stroke-opacity: .6;
     }
 
     .after_link {
-      stroke: rgb(202,172,22);
+      stroke: rgb(255,128,0);
+      stroke-opacity: .6;
     }
 
     .div_link {
       stroke: rgb(65,219,0);
+      stroke-opacity: .6;
     }
+    
     .jumpto_link {
       stroke: rgb(12,93,165);
+      stroke-opacity: .5;
     }
     </style>
   </head>
@@ -59,19 +66,19 @@
       <div id="progressbar"></div>
     </div>
     <ul id="sidebar">
-      <li class="small-li" id="hide-sidebar">
+      <li class="ignore-li small-li" id="hide-sidebar">
         hide sidebar
       </li>
-      <li class="small-li" id="toggle-all">
+      <li class="ignore-li small-li" id="toggle-all">
         toggle all layers
       </li>
-      <li class="small-li" id="clear-all">
+      <li class="ignore-li small-li" id="clear-all">
         clear all layers
       </li>
       <li id='show_link'>
         <div class="layer">
           <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="50px" height="20px">
-            <line x1="10" y1="10" x2="40" y2="10" style="stroke:rgb(216,0,95);stroke-width:2" />
+            <line x1="10" y1="10" x2="40" y2="10" class="show_link" style="stroke-width:2" />
             <circle cx="10" cy="10" r="5" stroke="white" stroke-width="1.5" fill="rgb(76, 179, 218)" />
             <circle cx="40" cy="10" r="5" stroke="white" stroke-width="1.5" fill="rgb(76, 179, 218)" />
           </svg>
@@ -82,7 +89,7 @@
       <li id='after_link'>
         <div class="layer">
           <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="50px" height="20px">
-            <line x1="10" y1="10" x2="40" y2="10" style="stroke:rgb(202,172,22);stroke-width:2" />
+            <line x1="10" y1="10" x2="40" y2="10" class="after_link" style="stroke-width:2" />
             <circle cx="10" cy="10" r="5" stroke="white" stroke-width="1.5" fill="rgb(76, 179, 218)" />
             <circle cx="40" cy="10" r="5" stroke="white" stroke-width="1.5" fill="rgb(76, 179, 218)" />
           </svg>
@@ -93,7 +100,7 @@
       <li id='div_link'>
         <div class="layer">
           <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="50px" height="20px">
-            <line x1="10" y1="10" x2="40" y2="10" style="stroke:rgb(65,219,0);stroke-width:2" />
+            <line x1="10" y1="10" x2="40" y2="10" class="div_link" style="stroke-width:2" />
             <circle cx="10" cy="10" r="5" stroke="white" stroke-width="1.5" fill="rgb(76, 179, 218)" />
             <circle cx="40" cy="10" r="5" stroke="white" stroke-width="1.5" fill="rgb(76, 179, 218)" />
           </svg>
@@ -104,7 +111,7 @@
       <li id='jumpto_link'>
         <div class="layer">
           <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="50px" height="20px">
-            <line x1="10" y1="10" x2="40" y2="10" style="stroke:rgb(12,93,165);stroke-width:2" />
+            <line x1="10" y1="10" x2="40" y2="10" class="jumpto_link" style="stroke-width:2" />
             <circle cx="10" cy="10" r="5" stroke="white" stroke-width="1.5" fill="rgb(76, 179, 218)" />
             <circle cx="40" cy="10" r="5" stroke="white" stroke-width="1.5" fill="rgb(76, 179, 218)" />
           </svg>
@@ -112,10 +119,10 @@
           <span class="text">Highlight<br /><strong>jumpto</strong> links</span>
         </div>
       </li>
-      <li class="ex-small-li selected" id="toggle-tooltip">
+      <li class="ignore-li ex-small-li selected" id="toggle-tooltip">
         hover tooltip
       </li>
-      <li class="small-li" id="reset-graph">
+      <li class="ignore-li small-li" id="reset-graph">
         reset graph
       </li>
     </ul>
@@ -168,7 +175,7 @@
   });
   
   $("#toggle-all").click(function() {
-    $.each($("li:not(.small-li)"), function() {
+    $.each($("li:not(.ignore-li)"), function() {
       if (!$(this).hasClass("selected")) {
         $(this).trigger('click');
       }
@@ -176,7 +183,7 @@
   });
   
   $("#clear-all").click(function() {
-    $.each($("li:not(.small-li)"), function() {
+    $.each($("li:not(.ignore-li)"), function() {
       if ($(this).hasClass("selected")) {
         $(this).trigger('click');
       }
@@ -236,16 +243,16 @@
       if (this.getAttribute('type') == type) {
         switch(type) {
           case 'show':
-            this.setAttribute("class", "link show_link");
+            this.setAttribute("class", "show_link");
             break;
           case 'after':
-            this.setAttribute("class", "link after_link");
+            this.setAttribute("class", "after_link");
             break;
           case 'div':
-            this.setAttribute("class", "link div_link");
+            this.setAttribute("class", "div_link");
             break;
           case 'jumpto':
-            this.setAttribute("class", "link jumpto_link");
+            this.setAttribute("class", "jumpto_link");
             break;
           default:
             this.setAttribute("class", "link");
