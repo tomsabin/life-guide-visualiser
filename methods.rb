@@ -1,9 +1,8 @@
 @raw = []
 
 def clean_lgil(raw)
-  # raw.map! { |line| line == "" ? " " : line }
   raw.delete_if { |line| line == '' }
-  raw.delete_if { |line| line =~ /(^(?:(?!(show\s[^\.]+(if\s.+)?$)|after|begin|end).)+$|^((show\s[^\.]+(if\s.+)?$)|after|begin|end)?\t*\s*#+.*)/ }
+  raw.keep_if { |line| line =~ /^(show\s[^\.]+(if\s.+)?$|after.+$|begin.+$|end.+$)/ }
   raw.map! { |line| line =~ /^(show|after).+(\s|\t)*#.*/ ? line.slice(0...(line.index('#'))).rstrip : line }
   @raw = raw
 end
@@ -20,9 +19,9 @@ end
 def find_sections(nodes)
   @sections = []
   group_int = 3
-  @raw.count { |line| line =~ /begin\ssection.*/ }.times do
-    find_section(@sections)
-  end
+  begin_count = @raw.count { |line| line =~ /begin(\ssection)?.*/ }
+  end_count = @raw.count { |line| line =~ /end(\ssection)?.*/ }
+  begin_count.times { find_section(@sections) } if begin_count == end_count
   @sections.each do |section|
     temp_raw = @raw[section[:begin_index]..section[:end_index]]
     temp_raw.each do |line|
@@ -37,13 +36,14 @@ def find_sections(nodes)
 end
 
 def find_section(arr)
+  section_name = @raw.find { |line| line =~ /begin(\ssection)?.*/ }
   arr.push({
-    :section_name => @raw.find { |line| line =~ /begin\ssection.*/ }.split(' ')[2],
-    :begin_index => @raw.find_index { |line| line =~ /begin\ssection.*/ } + 1,
-    :end_index => @raw.find_index { |line| line =~ /end\ssection.*/ } - 1
+    :section_name => section_name =~ /begin(\ssection)?.*/ ? section_name.split(' ')[2] : section_name.split(' ')[1],
+    :begin_index => @raw.find_index { |line| line =~ /begin(\ssection)?.*/ } + 1,
+    :end_index => @raw.find_index { |line| line =~ /end(\ssection)?.*/ } - 1
   })
-  @raw[@raw.find_index { |line| line =~ /begin\ssection.*/ }] = 'deleteme'
-  @raw[@raw.find_index { |line| line =~ /end\ssection.*/ }] = 'deleteme'
+  @raw[@raw.find_index { |line| line =~ /begin(\ssection)?.*/ }] = 'deleteme'
+  @raw[@raw.find_index { |line| line =~ /end(\ssection)?.*/ }] = 'deleteme'
 end
 
 def parse_lgil
