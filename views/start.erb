@@ -447,6 +447,7 @@
   document.addEventListener("mousemove", recordMouse, false);
   
   var prev_link_attributes = [];
+  var prev_ind_link_attribute = "";
   
   function showInformation(obj, node) {
     //inefficient checking.. woo!
@@ -485,6 +486,8 @@
         $('#graph-tooltip').append("<br /><span class='tooltip_title'>Link type:</span> " + obj['type']);
         $('#graph-tooltip').append("<br /><span class='tooltip_title'>Link value:</span> " + obj['value']);
       }
+      prev_ind_link_attribute = $("#lineid_"+obj['source']['name']+""+obj['target']['name']).attr('class');
+      $("#lineid_"+obj['source']['name']+""+obj['target']['name']).attr('class', 'link link_hover');
       $('#nodeid_'+obj['source']['name']).attr("class", "node node_hover");
       $('#nodeid_'+obj['target']['name']).attr("class", "node node_hover");
     }
@@ -509,6 +512,7 @@
         }
       });
     } else {
+      $("#lineid_"+obj['source']['name']+""+obj['target']['name']).attr('class', prev_ind_link_attribute);
       $('#nodeid_'+obj['source']['name']).attr("class", "node");
       $('#nodeid_'+obj['target']['name']).attr("class", "node");
     }
@@ -540,6 +544,7 @@
     var link = svg.selectAll(".link")
       .data(graph.links)
       .enter().append("line")
+      .attr("id", function(d) { return "lineid_" + d.source.name + "" + d.target.name})
       .attr("class", "link")
       .attr("type", function(d) { return d.type })
       .attr("belongs_to", function(d) { return d.source.name + " " + d.target.name })
