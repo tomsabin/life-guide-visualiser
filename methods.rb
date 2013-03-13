@@ -152,3 +152,13 @@ def add_link(source_name, target_name, value = 1, type = "none")
     :type => type
   } )
 end
+
+#http://stackoverflow.com/questions/4136248/how-to-generate-a-human-readable-time-range-using-ruby-on-rails
+def readable_time(secs)
+  [[60, :seconds], [60, :minutes], [24, :hours], [1000, :days]].map{ |count, name|
+    if secs > 0
+      secs, n = secs.divmod(count)
+      "#{n.to_i} #{name}"
+    end
+  }.compact.reverse.join(' ')
+end
