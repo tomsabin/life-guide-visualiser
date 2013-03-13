@@ -44,25 +44,26 @@ end
 
 post '/processSessions/?' do
   sessions = {}
-  request.env["rack.input"].read["session_data"].each do |session|
+  session_arr = []
+  duration = 0
+  JSON.parse(request.env["rack.input"].read)["session_data"].each do |session|
     session["visited_nodes"].each_with_index do |node, index|
+      duration += node["duration"]
       unless index == session["visited_nodes"].size-1
-        puts "#{index} (#{session["visited_nodes"].size}): #{node} -- #{session["visited_nodes"][index+1]["node_name"]}"
+        current_name = node["node_name"]
+        next_name = session["visited_nodes"][index+1]["node_name"]
+        if sessions["lineid_"+current_name+next_name]
+          sessions["lineid_"+current_name+next_name] += 1
+        else
+          sessions["lineid_"+current_name+next_name] = 1
+        end
       end
-
-    #   current_name = node["node_name"]
-    #   next_name = session["visited_nodes"][index+1]["node_name"]
-    #   if sessions["lineid_"+current_name+next_name]
-    #     sessions["lineid_"+current_name+next_name] += 1
-    #   else
-    #     sessions["lineid_"+current_name+next_name] = 1
-    #   end
     end
+    session_arr.push({ :id => session["id"], :location => session["location"], :duration => readable_time(duration) })
+    duration = 0
   end
-  
-  #return the id of the link (lineid__sourcenametargetname) and the number of visits 
-  # {
-  #   "lineid_sourcenametargetname" => 1
-  # }
-  sessions.to_json
+  {
+    :sessions => sessions,
+    :tablular_data => session_arr
+  }.to_json
 end

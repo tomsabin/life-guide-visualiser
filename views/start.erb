@@ -476,18 +476,41 @@
           { "node_name" : "data2", "duration" : 23 },
           { "node_name" : "data3", "duration" : 36 }
         ]
+      },
+      { 
+        "id" : 4,
+        "location" : "Southampton, UK",
+        "visited_nodes" : [
+          { "node_name" : "welcome", "duration" : 13 },
+          { "node_name" : "login", "duration" : 5 },
+          { "node_name" : "data1", "duration" : 12 },
+          { "node_name" : "data2", "duration" : 33 },
+          { "node_name" : "data3", "duration" : 37 }
+        ]
       }
     ]
   }
   
-  // function processSessionData(data) {
-  function processSessionData() {
+  // function processSessionData(input) {
+  function addSessionData() {
+    $('body').append('<table id="sessiontable" border="1">    <thead>        <tr>            <th>Session ID</th>            <th>Location</th>            <th>Total duration</th>            </tr>    </thead>    <tbody>    <tr>    </tr>    </tbody>    </table>');
     $.post('processSessions', JSON.stringify(raw_session_data), function(data) {
-      console.log(data);
+      $.map(JSON.parse(data)['sessions'], function(value, key) {
+        $("#"+key).attr("style", "stroke-width: "+value+"px").attr("weighting", value);
+      });
+      $.each(JSON.parse(data)['tablular_data'], function() {
+        $('#sessiontable tr:last').after('<tr><td>' + this['id'] + '</td><td>' + this['location'] + '</td><td>' + this['duration'] + '</td></tr>');
+        // console.log(this['id'] + " : " + this['location'] + " : " + this['duration']);
+      });
     });
+    $('#sessiontable tbody tr:first').remove();
+    console.log("Session data added to graph");
+    // $('body').append('');
   }
   
-  processSessionData();
+  function removeSessionData() {
+    $('#sessiontable').remove();
+  }
   </script>
   
   <script type="text/javascript">
@@ -541,7 +564,9 @@
         $('#graph-tooltip').append("<span class='tooltip_title'>Source node:</span> " + obj['source']['name']);
         $('#graph-tooltip').append("<br /><span class='tooltip_title'>Target node:</span> " + obj['target']['name']);
         $('#graph-tooltip').append("<br /><span class='tooltip_title'>Link type:</span> " + obj['type']);
-        // $('#graph-tooltip').append("<br /><span class='tooltip_title'>Link value:</span> " + obj['value']);
+        if ($("#lineid_"+obj['source']['name']+""+obj['target']['name']).attr('weighting')) {
+          $('#graph-tooltip').append("<br /><span class='tooltip_title'>Link value:</span> " + $("#lineid_"+obj['source']['name']+""+obj['target']['name']).attr('weighting'));
+        }
       }
       prev_ind_link_attribute = $("#lineid_"+obj['source']['name']+""+obj['target']['name']).attr('class');
       $("#lineid_"+obj['source']['name']+""+obj['target']['name']).attr('class', 'link link_hover');
