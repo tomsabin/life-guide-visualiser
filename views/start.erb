@@ -271,10 +271,10 @@
   </script>
   
   <script type="text/javascript">
+  //upload functionality (based from dnduploader)
+  //http://onehub.com/blog/posts/designing-an-html5-drag-drop-file-uploader-using-sinatra-and-jquery-part-1/
   var fileCount = 0;
   var uploadCount = 0;
-  //dnduploader:
-  //http://onehub.com/blog/posts/designing-an-html5-drag-drop-file-uploader-using-sinatra-and-jquery-part-1/
   (function( $ ){
 
     var methods = {
@@ -435,6 +435,63 @@
   </script>
 
   <script type="text/javascript">
+  //example session info
+  var raw_session_data = {
+    "intervention" : "basicintervention",
+    "session_data": [
+      { 
+        "id" : 1,
+        "location" : "Southampton, UK",
+        "visited_nodes" : [
+          { "node_name" : "welcome", "duration" : 13 },
+          { "node_name" : "register", "duration" : 32 },
+          { "node_name" : "login", "duration" : 5 },
+          { "node_name" : "data1", "duration" : 15 },
+          { "node_name" : "data2", "duration" : 27 },
+          { "node_name" : "data3", "duration" : 41 }
+        ]
+      },
+      { 
+        "id" : 2,
+        "location" : "Southampton, UK",
+        "visited_nodes" : [
+          { "node_name" : "welcome", "duration" : 13 },
+          { "node_name" : "login", "duration" : 5 },
+          { "node_name" : "data1", "duration" : 12 },
+          { "node_name" : "data2", "duration" : 33 },
+          { "node_name" : "data3", "duration" : 37 }
+        ]
+      },
+      { 
+        "id" : 3,
+        "location" : "Eastleigh, UK",
+        "visited_nodes" : [
+          { "node_name" : "welcome", "duration" : 8 },
+          { "node_name" : "login", "duration" : 4 },
+          { "node_name" : "loginfail", "duration" : 5 },
+          { "node_name" : "welcome", "duration" : 2 },
+          { "node_name" : "register", "duration" : 20 },
+          { "node_name" : "login", "duration" : 4 },
+          { "node_name" : "data1", "duration" : 25 },
+          { "node_name" : "data2", "duration" : 23 },
+          { "node_name" : "data3", "duration" : 36 }
+        ]
+      }
+    ]
+  }
+  
+  // function processSessionData(data) {
+  function processSessionData() {
+    $.post('processSessions', JSON.stringify(raw_session_data), function(data) {
+      console.log(data);
+    });
+  }
+  
+  processSessionData();
+  </script>
+  
+  <script type="text/javascript">
+  //graph and tooltip
   var showTooltip = true;
   var cursorX, cursorY;
   var color = d3.scale.category20();
@@ -484,7 +541,7 @@
         $('#graph-tooltip').append("<span class='tooltip_title'>Source node:</span> " + obj['source']['name']);
         $('#graph-tooltip').append("<br /><span class='tooltip_title'>Target node:</span> " + obj['target']['name']);
         $('#graph-tooltip').append("<br /><span class='tooltip_title'>Link type:</span> " + obj['type']);
-        $('#graph-tooltip').append("<br /><span class='tooltip_title'>Link value:</span> " + obj['value']);
+        // $('#graph-tooltip').append("<br /><span class='tooltip_title'>Link value:</span> " + obj['value']);
       }
       prev_ind_link_attribute = $("#lineid_"+obj['source']['name']+""+obj['target']['name']).attr('class');
       $("#lineid_"+obj['source']['name']+""+obj['target']['name']).attr('class', 'link link_hover');
