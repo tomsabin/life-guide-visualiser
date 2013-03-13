@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-    <title>Proj..</title>
+    <title>LifeGuide Intervention Visualisator</title>
     <link rel="stylesheet" type="text/css" href="stylesheet.css">
     <script src="d3.v3.min.js"></script>
     <script src="jquery.min.js"></script>
@@ -499,13 +499,18 @@
         $("#"+key).attr("style", "stroke-width: "+value+"px").attr("weighting", value);
       });
       $.each(JSON.parse(data)['tablular_data'], function() {
-        $('#sessiontable tr:last').after('<tr><td>' + this['id'] + '</td><td>' + this['location'] + '</td><td>' + this['duration'] + '</td></tr>');
-        // console.log(this['id'] + " : " + this['location'] + " : " + this['duration']);
+        $('#sessiontable tr:last').after('<tr><td>' + this['id'] + '</td><td>' + this['location'] + '</td><td>' + this['duration'] + '</td></tr>').hover(
+          function() {
+            console.log('foo');
+          },
+          function() {
+            console.log('bar');
+          }
+        );
+        //also need to add function here to display the line that session took
       });
     });
-    $('#sessiontable tbody tr:first').remove();
     console.log("Session data added to graph");
-    // $('body').append('');
   }
   
   function removeSessionData() {
