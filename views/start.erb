@@ -154,7 +154,7 @@
     $.each($('li.selected'), function() {
       $(this).removeClass('selected')
     });
-    $("#toggle-tooltip").attr("class", "ex-small-li selected");
+    $("#toggle-tooltip").attr("class", "ignore-li ex-small-li selected");
     showTooltip = true;
     $("#reset-graph").trigger('click');
   });
