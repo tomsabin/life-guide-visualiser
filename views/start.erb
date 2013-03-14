@@ -499,16 +499,30 @@
         $("#"+key).attr("style", "stroke-width: "+value+"px").attr("weighting", value);
       });
       $.each(JSON.parse(data)['tablular_data'], function() {
-        $('#sessiontable tr:last').after('<tr><td>' + this['id'] + '</td><td>' + this['location'] + '</td><td>' + this['duration'] + '</td></tr>').hover(
-          function() {
-            console.log('foo');
-          },
-          function() {
-            console.log('bar');
-          }
-        );
-        //also need to add function here to display the line that session took
+        $('#sessiontable tr:last').after('<tr><td>' + this['id'] + '</td><td>' + this['location'] + '</td><td>' + this['duration'] + '</td></tr>');
       });
+      $('#sessiontable tbody tr').hover(
+        function() {
+          var id = parseInt($(this).children().first().text());
+          $.each(raw_session_data["session_data"], function() {
+            if (id == this["id"]) {
+              $.each(raw_session_data["session_data"][id-1]["visited_nodes"], function() {
+                $("#nodeid_"+this["node_name"]).attr('class', 'node node_hover');
+              });
+            }
+          });
+        },
+        function() {
+          var id = parseInt($(this).children().first().text());
+          $.each(raw_session_data["session_data"], function() {
+            if (id == this["id"]) {
+              $.each(raw_session_data["session_data"][id-1]["visited_nodes"], function() {
+                $("#nodeid_"+this["node_name"]).attr('class', 'node');
+              });
+            }
+          });
+        }
+      );
     });
     console.log("Session data added to graph");
   }
