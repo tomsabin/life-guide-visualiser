@@ -493,7 +493,7 @@
   
   // function processSessionData(input) {
   function addSessionData() {
-    $('body').append('<table id="sessiontable" border="1">    <thead>        <tr>            <th>Session ID</th>            <th>Location</th>            <th>Total duration</th>            </tr>    </thead>    <tbody>    <tr>    </tr>    </tbody>    </table>');
+    $('body').append('<table id="sessiontable" border="1"><thead><tr><th>Session ID</th><th>Location</th><th>Total duration</th></tr></thead><tbody><tr></tr></tbody></table>');
     $.post('processSessions', JSON.stringify(raw_session_data), function(data) {
       $.map(JSON.parse(data)['sessions'], function(value, key) {
         $("#"+key).attr("style", "stroke-width: "+value+"px").attr("weighting", value);
