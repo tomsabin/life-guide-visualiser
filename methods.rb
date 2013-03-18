@@ -2,7 +2,7 @@
 
 def clean_lgil(raw)
   raw.delete_if { |line| line == '' }
-  raw.keep_if { |line| line =~ /^(show\s[^\.]+(if\s.+)?$|after.+$|begin.+$|end.+$)/ }
+  raw.keep_if { |line| line =~ /^(show\s[^\.]+(if\s.+)?$|after.+$|begin(\ssection)?.*$|end(\ssection)?.*)/ }
   raw.map! { |line| line =~ /^(show|after).+(\s|\t)*#.*/ ? line.slice(0...(line.index('#'))).rstrip : line }
   @raw = raw
 end
@@ -19,8 +19,8 @@ end
 def find_sections(nodes)
   @sections = []
   group_int = 3
-  begin_count = @raw.count { |line| line =~ /begin(\ssection)?.*/ }
-  end_count = @raw.count { |line| line =~ /end(\ssection)?.*/ }
+  begin_count = @raw.count { |line| begin_token?(line) }
+  end_count = @raw.count { |line| end_token?(line) }
   begin_count.times { find_section(@sections) } if begin_count == end_count
   @sections.each do |section|
     temp_raw = @raw[section[:begin_index]..section[:end_index]]
@@ -36,14 +36,14 @@ def find_sections(nodes)
 end
 
 def find_section(arr)
-  section_name = @raw.find { |line| line =~ /begin(\ssection)?.*/ }
+  section_name = @raw.find { |line| begin_token?(line) }
   arr.push({
-    :section_name => section_name =~ /begin(\ssection)?.*/ ? section_name.split(' ')[2] : section_name.split(' ')[1],
-    :begin_index => @raw.find_index { |line| line =~ /begin(\ssection)?.*/ } + 1,
-    :end_index => @raw.find_index { |line| line =~ /end(\ssection)?.*/ } - 1
+    :section_name => section_name.split(' ').last,
+    :begin_index => @raw.find_index { |line| begin_token?(line) } + 1,
+    :end_index => @raw.find_index { |line| end_token?(line) } - 1
   })
-  @raw[@raw.find_index { |line| line =~ /begin(\ssection)?.*/ }] = 'deleteme'
-  @raw[@raw.find_index { |line| line =~ /end(\ssection)?.*/ }] = 'deleteme'
+  @raw[@raw.find_index { |line| begin_token?(line) }] = 'deleteme'
+  @raw[@raw.find_index { |line| end_token?(line) }] = 'deleteme'
 end
 
 def parse_lgil
@@ -124,6 +124,14 @@ end
 
 def section_token?(line)
   true if line =~ /begin\ssection\s[A-z0-9_-]+/
+end
+
+def begin_token?(line)
+  true if line =~ /^begin(\ssection)?.*/
+end
+
+def end_token?(line)
+  true if line =~ /^end(\ssection)?.*/
 end
 
 def find_node(name)
