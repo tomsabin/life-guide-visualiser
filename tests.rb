@@ -105,15 +105,3 @@ class RegexTest < Test::Unit::TestCase
     fail.each { |input| assert_equal nil, div_link_token?(input) }
   end
 end
-
-class LgilParserTest < Test::Unit::TestCase
-  @raw
-  @links
-  @nodes
-  
-  def test_clean_lgil
-  end
-  
-  def test_parse_lgil
-  end
-end
