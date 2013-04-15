@@ -122,7 +122,7 @@ def after_token?(line)
   true if line =~ /after\s.*\sif\s((isempty|and|or)\s)?\(.*\)\s?goto\s(.*)/
 end
 
-def section_token?(line)
+def section_token?(line) #
   true if line =~ /begin\ssection\s[A-z0-9_-]+/
 end
 
