@@ -1,7 +1,7 @@
 comp3020code
 ============
 
-COMP3020 Individual Project (code)
+COMP3020 Individual Project (code) - last commit Monday 29th April
 
 + Run server with `foreman start`, listening on [localhost:5000](http://localhost:5000/), or `rackup -p 5000 config.ru &`
 
