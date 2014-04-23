@@ -1,0 +1,603 @@
+show pW1
+show meetteam
+show reference
+set age to 35
+
+show Doctors_Qs
+
+show men_other_symptoms if (Doctors_Qs.men_headache = "men_yes")
+
+show Safety_Qs_men if (and (Doctors_Qs.men_headache = "men_yes", men_other_symptoms.men = "men_yes"))
+
+show sept_Qs if (or(...
+	(men_other_symptoms.men = "men_no"),...
+	(Doctors_Qs.men_headache = "men_no")...
+)) 
+
+show sept_other_symptoms if (sept_Qs.sept_extremely_ill = "sept_yes")
+
+show Safety_Qs_sept if (and (sept_Qs.sept_extremely_ill = "sept_yes", sept_other_symptoms.sept = "sept_yes"))
+show Safety_Qs_fine if (or(...
+(sept_other_symptoms.sept = "sept_no"),...
+(sept_Qs.sept_extremely_ill = "sept_no")...
+))
+
+
+after Safety_Qs_fine if (Safety_Qs_fine.d_q_symptom = "cough") goto cough
+after Safety_Qs_fine if (Safety_Qs_fine.d_q_symptom = "sore_throat") goto sore_throat
+after Safety_Qs_fine if (Safety_Qs_fine.d_q_symptom = "runny_nose") goto runny_nose
+after Safety_Qs_fine if (Safety_Qs_fine.d_q_symptom = "fever") goto fever
+
+show Doctors_Qs_select_symptom
+after Doctors_Qs_select_symptom if (Doctors_Qs_select_symptom.d_q_symptom = "cough") goto cough
+after Doctors_Qs_select_symptom if (Doctors_Qs_select_symptom.d_q_symptom = "sore_throat") goto sore_throat
+after Doctors_Qs_select_symptom if (Doctors_Qs_select_symptom.d_q_symptom = "runny_nose") goto runny_nose
+after Doctors_Qs_select_symptom if (Doctors_Qs_select_symptom.d_q_symptom = "fever") goto fever
+
+show Treatment_Options
+after Treatment_Options if (Treatment_Options.t_o_symptom = "cough") goto pT1
+after Treatment_Options if (Treatment_Options.t_o_symptom = "sore_throat") goto st_pT1
+after Treatment_Options if (Treatment_Options.t_o_symptom = "runny_nose") goto rn_pT1
+after Treatment_Options if (Treatment_Options.t_o_symptom = "fever") goto fv_pT1
+
+###### If the tab "Cough" is selected#######
+begin section cough
+
+show pD1 if (or (Safety_Qs_fine.d_q_symptom = "cough", Doctors_Qs_select_symptom.d_q_symptom = "cough"))
+show pD2 if (or (Safety_Qs_fine.d_q_symptom = "cough", Doctors_Qs_select_symptom.d_q_symptom = "cough"))
+show pD3 if (or (Safety_Qs_fine.d_q_symptom = "cough", Doctors_Qs_select_symptom.d_q_symptom = "cough"))
+
+####
+#pA1a: Contact the dr/NHS Direct immediately if Yes to: EITHER
+#	1.Do you have severe pain the chest, jaw, or upper arm?
+#	2.Have you become much more short of breath than normal – so that you cannot talk in full sentences or you are unable to walk without getting very short of breath?
+#	3.Are you becoming blue around the lips?
+#	4.Are you choking on food or another object stuck in your throat?
+#	5.Do you have a bad headache with any of these other symptoms (unusual discomfort in the eyes, stiff neck, rash, rapid breathing, confusion)?
+#	6.Are you feeling extremely ill and experiencing any of these symptoms (drenching sweats, uncontrollable shivering, pains in arms, weak, faint, dizzy, pale, etc.)?]
+
+show pA1a if (	||(	 ...
+	(pD3.pD3_Q1 = "pD3_Q1_1"), ...
+	(pD3.pD3_Q2 = "pD3_Q2_1"), ...
+	(pD3.pD3_Q3 = "pD3_Q3_1"), ...
+	(pD3.pD3_Q4 = "pD3_Q4_1") ...
+	))
+	
+# show question(s) ticked for pA1a
+show pA1a.selected1 if (pD3.pD3_Q1 = "pD3_Q1_1")
+show pA1a.selected2 if (pD3.pD3_Q2 = "pD3_Q2_1")
+show pA1a.selected3 if (pD3.pD3_Q3 = "pD3_Q3_1")
+show pA1a.selected4 if (pD3.pD3_Q4 = "pD3_Q4_1")
+
+
+####
+#pA1b: Contact the dr if: EITHER
+#	1. Had cough for more than 4 weeks AND not getting better OR getting worse
+#	2. Had cough for between 2-4 weeks AND is getting worse
+#	3. Had a high fever (38.5 or more) for at least 3 days
+#	4. Breathing getting worse
+#	5. Cough start after eating a new food, taking medicine, breathing fumes
+#	6. Over 65 and Yes to any 2 of:
+# 		(i) 	Have health problems (asthma, chronic bronchitis, emphysema, chronic obstructive pulmonary disease (COPD), lung disease, heart problems, diabetes)
+# 		(ii) 	Immune system is suppressed or taking drugs which suppress the immune system
+# 		(iii) 	Taking steroids
+#	7. Over 80 and Yes to: EITHER
+# 		(i) 	Have health problems (asthma, chronic bronchitis, emphysema, chronic obstructive pulmonary disease (COPD), lung disease, heart problems, diabetes)
+# 		(ii) 	Taking steroids
+# 		(iii) 	Been admitted to hospital as an emergency in the past year
+# 		(iiii) 	Immune system is suppressed or taking drugs which suppress the immune system
+
+set condition1 to ...
+		&&(...
+			(pD1.pD1_Q2 = "pD1_Q2_3"),...
+			||( ...
+				(pD1.pD1_Q3 = "pD1_Q3_2"),...
+				(pD1.pD1_Q3 = "pD1_Q3_3")...
+			)...
+		)
+		
+set condition2 to ...
+		&&(...
+			(pD1.pD1_Q2 = "pD1_Q2_2"), ...
+			(pD1.pD1_Q3 = "pD1_Q3_3")...
+		) 
+
+set condition3 to (pD1.pD1_Q5 = "pD1_Q5_1")
+
+set condition4 to (pD1.pD1_Q6 = "pD1_Q6_1")
+
+set condition5 to (pD2.pD2_Q8 = "pD2_Q8_1")
+
+set condition6 to ...
+		&&(...
+			(age >= 65), ...
+			||(...
+				&&(...
+					||(...
+						(pD2.pD2_Q1 = "pD2_Q1_1"), ...
+						(pD2.pD2_Q2 = "pD2_Q2_1"), ...
+						(pD2.pD2_Q3 = "pD2_Q3_1"), ...
+						(pD2.pD2_Q4 = "pD2_Q4_1")  ...
+					),...
+					(pD2.pD2_Q5 = "pD2_Q5_1")...
+				), ...
+				&& (...
+					|| (...
+						(pD2.pD2_Q1 = "pD2_Q1_1"), ...
+						(pD2.pD2_Q2 = "pD2_Q2_1"), ...
+						(pD2.pD2_Q3 = "pD2_Q3_1"), ...
+						(pD2.pD2_Q4 = "pD2_Q4_1")  ...
+					), ...
+					(pD2.pD2_Q6 = "pD2_Q6_1")...
+				), ...
+				&& (...
+					(pD2.pD2_Q5 = "pD2_Q5_1"), ...
+					(pD2.pD2_Q6 = "pD2_Q6_1")  ...
+				) ...
+			) ...
+		)
+
+set condition7 to ...
+		&&(...
+			(age >=80),...
+			|| (...
+				(pD2.pD2_Q1 = "pD2_Q1_1"), ...
+				(pD2.pD2_Q2 = "pD2_Q2_1"), ...
+				(pD2.pD2_Q3 = "pD2_Q3_1"), ...
+				(pD2.pD2_Q4 = "pD2_Q4_1"), ...
+				(pD2.pD2_Q5 = "pD2_Q5_1"), ...
+				(pD2.pD2_Q6 = "pD2_Q6_1"), ...
+				(pD2.pD2_Q7 = "pD2_Q7_1")  ...
+			)...
+		)...
+		
+show pA1b if ...
+(...
+	||(condition1, condition2, condition3, condition4, condition5, condition6, condition7)...
+)	
+
+# show question(s) ticked for pA1b
+show pA1b.selected1 if (condition1)
+show pA1b.selected2 if (condition2)
+show pA1b.selected3 if (condition3)
+show pA1b.selected4 if (condition4)
+show pA1b.selected5 if (condition5)
+show pA1b.selected6 if (||(condition6, condition7))
+	
+####
+#pA1c: if does not meet ‘see a dr’ advice criteria
+
+show pA1c if (not (&&(condition1, condition2, condition3, condition4, condition5, condition6, condition7)))
+
+set coughlink to "?renderpage=whatiscausingmycough?t=["
+if (pD1.pD1_Q1 contains (multiple("pD1_Q1_1"))) set coughlink to append(coughlink, "ticklyCough:'ticklyCough',")
+if ( || (pD1.pD1_Q1 contains (multiple("pD1_Q1_2")), pD1.pD1_Q1 contains(multiple("pD1_Q1_3")), pD1.pD1_Q1 contains(multiple("pD1_Q1_5")), pD1.pD1_Q1 contains(multiple("pD1_Q1_6")))) set coughlink to append(coughlink, "chestyCough:'chestyCough',")
+if (pD1.pD1_Q1 contains (multiple("pD1_Q1_4"))) set coughlink to append(coughlink, "feelPainCough:'feelPainCough',")
+if (1=1) set coughlink to append(coughlink, "]")
+
+###CHECK WITH LISHA
+#set pA1c.causeCoughLink to coughlink
+
+# show warning for question(s) ticked 
+show pA1c.advice1 if (pD1.pD1_Q4 = "pD1_Q4_1")
+
+show pA1c.smoking if (pD1.pD1_Q7 = "pD1_Q7_1")
+
+show pA1c.warning if ( ...
+	||(...
+		(pD2.pD2_Q1 = "pD2_Q1_1"), ...
+		(pD2.pD2_Q2 = "pD2_Q2_1"), ...
+		(pD2.pD2_Q3 = "pD2_Q3_1"), ...
+		(pD2.pD2_Q4 = "pD2_Q4_1"), ...
+		(pD2.pD2_Q5 = "pD2_Q5_1"), ...
+		(pD2.pD2_Q6 = "pD2_Q6_1")  ...
+	)...
+)
+
+show pA1c2
+end section
+show pT1
+
+###### End of Doctor's Questions "Cough" Section #######
+
+
+
+
+
+###### If the tab "Sore Throat" is selected #######
+begin section sore_throat
+
+show st_pD1 if (or (Safety_Qs_fine.d_q_symptom = "sore_throat", Doctors_Qs_select_symptom.d_q_symptom = "sore_throat"))
+show st_pD3 if (or (Safety_Qs_fine.d_q_symptom = "sore_throat", Doctors_Qs_select_symptom.d_q_symptom = "sore_throat"))
+
+####
+#st_pA1a: Contact the dr/NHS Direct immediately if Yes to: EITHER
+#1. Have you become much more short of breath than normal – so that you cannot talk in full sentences or you are unable to walk without getting very short of breath?
+#2. Do you have a bad headache with any of these other symptoms (unusual discomfort in the eyes, stiff neck, rash, rapid breathing, confusion)?
+#3. Are you swelling up a lot around the lips, tongue or throat?
+#4. Are you feeling extremely ill and experiencing any of these symptoms (drenching sweats, uncontrollable shivering, pains in arms, weak, faint, dizzy, pale, etc.)?
+#5. Can’t swallow at all (not even own saliva)
+
+show st_pA1a if (	||(	 ...
+	(st_pD3.st_pD3_Q1 = "st_pD3_Q1_1"), ...
+	(st_pD3.st_pD3_Q3 = "st_pD3_Q3_1"), ...
+	(st_pD1.st_pD1_Q3 = "st_pD1_Q3_3") ...
+))
+
+# show question(s) ticked for pA1a
+show st_pA1a.selected1 if (st_pD3.st_pD3_Q1 = "st_pD3_Q1_1")
+show st_pA1a.selected3 if (st_pD3.st_pD3_Q3 = "st_pD3_Q3_1")
+show st_pA1a.selected4 if (st_pD1.st_pD1_Q3 = "st_pD1_Q3_3")
+
+
+####
+#st_pA1b: Contact the dr if: EITHER
+#1. Had sore throat for more than 4 weeks AND sore throat is not getting better OR is getting worse
+#2. Difficult to swallow – not able to drink enough to stop thirst
+#3. Had a high fever (>38.5) for at least 3 days
+
+set st_condition1 to ...
+		&&(...
+			(st_pD1.st_pD1_Q1 = "st_pD1_Q1_2"),...
+			||( ...
+				(st_pD1.st_pD1_Q2 = "st_pD1_Q2_2"),...
+				(st_pD1.st_pD1_Q2 = "st_pD1_Q2_3")...
+			)...
+		)
+		
+set st_condition2 to (st_pD1.st_pD1_Q3 = "st_pD1_Q3_2")
+
+set st_condition3 to (st_pD1.st_pD1_Q5 = "st_pD1_Q5_1")
+
+show st_pA1b if ...
+(...
+	||(st_condition1, st_condition2, st_condition3)...
+)	
+
+# show question(s) ticked for st_pA1b
+show st_pA1b.selected1 if (st_condition1)
+show st_pA1b.selected2 if (st_condition2)
+show st_pA1b.selected3 if (st_condition3)
+
+####
+#st_pA1c: if does not meet ‘see a dr’ advice criteria
+
+show st_pA1c if (not (&&(st_condition1, st_condition2, st_condition3)))
+
+show st_pA1c.advice1 if (st_pD1.st_pD1_Q4 = "st_pD1_Q4_1") 
+
+# show warning if Yes to: Immune system is suppressed or taking drugs which suppress the immune system
+show st_pA1c.warning if (st_pD1.st_pD1_Q6 = "st_pD1_Q6_1")
+
+show st_pA1c2	
+end section
+
+show st_pT1
+
+###### End of Doctor's Questions "Cough" Section #######
+
+
+
+
+
+###### If the tab Runny Nose" is selected #######
+begin section runny_nose
+show rn_pD1 if ( or (Safety_Qs_fine.d_q_symptom = "runny_nose", Doctors_Qs_select_symptom.d_q_symptom = "runny_nose" ))
+
+####
+#rn_pA1a: Contact the dr/NHS Direct immediately if Yes to: 
+#1. Unusual visible swelling around eyes or eyebrows
+
+show rn_pA1a if (rn_pD1.rn_pD1_Q8 = "rn_pD1_Q8_1")
+
+# show question(s) ticked for pA1a
+show rn_pA1a.selected1 if (rn_pD1.rn_pD1_Q8 = "rn_pD1_Q8_1")
+
+####
+#rn_pA1b: Contact the dr if: EITHER
+#1. Had symptoms for more than 3 weeks AND not getting better OR getting worse
+#2. Symptoms started after eating a new food, taking medicine, breathing fumes, or new contact with animals or plants
+#3. Had a high fever (>38.5)  for at least 3 days
+#4. Area above eyebrow(s) or across lower forehead is very painful and sensitive to touch AND have thick, discoloured discharge from the nose
+
+set rn_condition1 to ...
+		&&(...
+			(rn_pD1.rn_pD1_Q1 = "rn_pD1_Q1_2"),...
+			||( ...
+				(rn_pD1.rn_pD1_Q2 = "rn_pD1_Q2_2"),...
+				(rn_pD1.rn_pD1_Q2 = "rn_pD1_Q2_3")...
+			)...
+		)
+		
+set rn_condition2 to (rn_pD1.rn_pD1_Q12 = "rn_pD1_Q12_1")
+
+set rn_condition3 to (rn_pD1.rn_pD1_Q10 = "rn_pD1_Q10_1")
+
+set rn_condition4 to ...
+		&&(...
+			(rn_pD1.rn_pD1_Q9 = "rn_pD1_Q9_1"),(rn_pD1.rn_pD1_Q5 = "rn_pD1_Q5_1")...
+		)
+		
+show rn_pA1b if ...
+(...
+	||(rn_condition1, rn_condition2, rn_condition3, rn_condition4 )...
+)	
+
+# show question(s) ticked for rn_pA1b
+show rn_pA1b.selected1 if (rn_condition1)
+show rn_pA1b.selected2 if (rn_condition2)
+show rn_pA1b.selected3 if (rn_condition3)
+show rn_pA1b.selected4 if (rn_condition4)
+
+####
+#rn_pA1c: if does not meet ‘see a dr’ advice criteria
+
+show rn_pA1c if (not (&&(rn_condition1, rn_condition2, rn_condition3, rn_condition4)))
+
+#sinustitis logic: 2 or more yes to the rn_pD1_Q4, rn_pD1_Q5, rn_pD1_Q6
+set rn_conditionS1 to (rn_pD1.rn_pD1_Q4 = "rn_pD1_Q4_1")
+set rn_conditionS2 to (rn_pD1.rn_pD1_Q5 = "rn_pD1_Q5_1")
+set rn_conditionS3 to (rn_pD1.rn_pD1_Q6 = "rn_pD1_Q6_1")
+
+set sinusitis to ...
+||(...
+	(&& (rn_conditionS1, rn_conditionS2)),...
+	(&& (rn_conditionS1, rn_conditionS3)),...
+	(&& (rn_conditionS2, rn_conditionS2))...
+)
+
+#advice logic:
+#if sinusitis
+#  if glands, then advice1, advice2, advice22
+#  else advice2, advice22
+#if no sinusitis
+#  if glands, then advice3, advice4, advice5
+#  else advice3, advice5
+
+set glands to (rn_pD1.rn_pD1_Q7 = "rn_pD1_Q7_1")
+
+show rn_pA1c.advice1 if (&& (sinusitis, glands))
+show rn_pA1c.advice2 if (sinusitis)
+show rn_pA1c.advice22 if (sinusitis)
+show rn_pA1c.advice3 if (not (sinusitis))
+show rn_pA1c.advice4 if (&& ((not (sinusitis)), glands))
+show rn_pA1c.advice5 if (not (sinusitis))
+
+# show warning if Yes to: Immune system is suppressed or taking drugs which suppress the immune system
+
+show rn_pA1c.warning if (rn_pD1.rn_pD1_Q11 = "rn_pD1_Q11_1")
+end section
+
+show rn_pT1
+
+
+###### End of Doctor's Questions "Runny Nose" Section #######
+
+
+
+
+
+###### If the tab "Fever" is selected #######
+begin section fever
+
+show fv_pD1 if (or (Safety_Qs_fine.d_q_symptom = "fever", Doctors_Qs_select_symptom.d_q_symptom = "fever"))
+show fv_pD2 if (or (Safety_Qs_fine.d_q_symptom = "fever", Doctors_Qs_select_symptom.d_q_symptom = "fever"))
+
+####
+#fv_pA1a: Contact the dr immediately if Yes to: 
+#1. Have you become much more short of breath than normal?
+#2. Do you have a bad headache with any of these other symptoms (unusual discomfort in the eyes, stiff neck, rash, rapid breathing, confusion)?
+#3. Are you feeling extremely ill with any of these symptoms (uncontrollable shivering, drenching sweats, etc.)?
+
+show fv_pA1a if (fv_pD2.fv_pD2_Q4 = "fv_pD2_Q4_1")
+
+####
+#fv_pA1b: Contact the dr if: 
+#1. Over 65 AND temperature is above 37.5oC for more 3 days
+# OR  (for under 65s)
+#2. Temperature is above 38.5oC  
+# AND EITHER
+#3. Fever has lasted 3 days 
+#4. Vomiting/ diarrhoea
+#5. Fever started after travelling outside UK
+#6. Been bitten by an insect or animal and reddening spreading around bite
+
+# or(1, and(2, or(3, 4, 5, 6)))
+
+#set fv_condition1 to ...
+#		&&(...
+#			(age >= 65),...
+#			&& (...
+#				||(...
+#					(fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_2"), ...
+#					(fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_3"), ...
+#					(fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_4")...
+#				),...
+#				(fv_pD1.fv_pD1_Q2 = "fv_pD1_Q2_2")...
+#			)...
+#		)...
+
+###################################################################
+#            startingpoint  Logic to be changed                   #
+###################################################################
+
+#set over65morethan37 to and (age >=65, ||(...
+#						(fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_2"), ...
+#						(fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_3"), ...
+#						(fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_4")...
+#						))
+
+#set under65morethan38 to and( age < 65, ||(...
+#						(fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_3"), ...
+#						(fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_4")...
+#						))
+
+#set hightemp to ...
+  #or ( over65morethan37, under65morethan38)
+		
+#set fv_condition2 to ...
+#	&&( age < 65, ...
+#		||(...
+#			(fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_3"),(fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_4")...
+#		) ...
+#	)
+		
+#set fv_condition3 to (fv_pD1.fv_pD1_Q2 = "fv_pD1_Q2_2")
+
+#set fv_condition4 to (fv_pD1.fv_pD1_Q3 = "fv_pD1_Q3_1")
+
+#set fv_condition5 to (fv_pD2.fv_pD2_Q2 = "fv_pD2_Q2_1")
+
+#set fv_condition6 to (fv_pD2.fv_pD2_Q3 = "fv_pD2_Q3_1")
+set over65 to (age>=65)
+set under65 to (age<65)
+
+set fv_tempover37 to ||((fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_2"), ...
+						(fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_3"), ...
+						(fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_4"))
+
+set fv_tempover38 to ||((fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_3"), ...
+						(fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_4"))
+						
+set fv_morethan3ds to (fv_pD1.fv_pD1_Q2 = "fv_pD1_Q2_2")
+
+set fv_vomitingordiarrhoea to (fv_pD1.fv_pD1_Q3 = "fv_pD1_Q3_1")
+
+set fv_sorethroatorcough to (fv_pD1.fv_pD1_Q4 = "fv_pD1_Q4_1")
+
+set fv_medicalprob to (fv_pD2.fv_pD2_Q1="fv_pD2_Q1_1")
+
+set fv_aftertravel to (fv_pD2.fv_pD2_Q2 = "fv_pD2_Q2_1")
+
+set fv_insectoranimalbite to (fv_pD2.fv_pD2_Q3 = "fv_pD2_Q3_1")
+
+set age65tempover37daysmorethan3 to && (over65, fv_tempover37, fv_morethan3ds)
+set tempover38aftertravel to && (fv_tempover38, fv_aftertravel)
+set tempover38vomitingordiarrhoea to && (fv_tempover38, fv_vomitingordiarrhoea)
+set tempover38insectoranimalbite to && (fv_tempover38, fv_insectoranimalbite)
+set under65tempover38morethan3 to && (under65, fv_tempover38, fv_morethan3ds)
+
+show fv_pA1b if ||(age65tempover37daysmorethan3, ...
+	tempover38aftertravel,...
+	tempover38vomitingordiarrhoea, ...
+	tempover38insectoranimalbite, ...
+	under65tempover38morethan3)
+
+# show question(s) ticked for fv_pA1b
+show fv_pA1b.selected1 if age65tempover37daysmorethan3
+show fv_pA1b.selected2 if (&&(fv_tempover38, not (age65tempover37daysmorethan3)))
+show fv_pA1b.selected6 if (fv_morethan3ds)
+show fv_pA1b.selected4 if (fv_aftertravel)
+show fv_pA1b.selected5 if (fv_insectoranimalbite)
+show fv_pA1b.selected3 if (fv_vomitingordiarrhoea)
+
+#show the website not for you page
+show no_cold_flu_symptoms if (fv_pD1.fv_pD1_Q4 = "fv_pD1_Q4_2") 
+
+####
+#fv_pA1c: if does not meet ‘see a dr’ advice criteria
+
+show fv_pA1c if (not ( &&(age65tempover37daysmorethan3, ...
+				tempover38aftertravel, ...
+				tempover38vomitingordiarrhoea, ...
+				tempover38insectoranimalbite, ...
+				under65tempover38morethan3)))
+
+show fv_pA1c.advice1 if (fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_1") 
+show fv_pA1c.advice2 if (fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_2") 
+show fv_pA1c.advice3 if (fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_3") 
+show fv_pA1c.advice4 if (fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_4") 
+
+# show warning if Yes to: Immune system is suppressed or taking drugs which suppress the immune system
+
+show fv_pA1c.warning if (fv_pD2.fv_pD2_Q1 = "fv_pD2_Q1_1")
+ 
+show fv_pA1c5
+end section
+
+##################################################################
+#  End of Debugging                       #
+############################################
+
+show fv_pT1
+
+######if the link "Common Questions about Colds and Flu" is selected#######
+show pFAQ1
+
+######if the link "Treatment Options" is selected#######
+
+show howdoyouknowfever 
+
+show Video_glands
+
+show Video_men_sept
+
+show Video_sinusitis
+
+#change this to the required page
+show pl
+
+#debugging codes (to be deleted)
+
+#interactions changed into links:
+show whatiscausingmyfever
+show howcanitellwhenineedtocontactmydoctor-fv
+show wouldantibioticshelp-fv
+show pneumonia
+show meningitis
+show howlongwillmyfeverlast
+show couldgoingtoseeadoctorhelpmyfevergetbetter
+show couldmysymptomsbepartlyduetoanallergy
+show heartrelatedproblems
+show wouldantibioticshelp
+show couldgoingtoseeacoctorhelpmyrunnystuffynoseclearupmorequickly
+show couldgoingtoseeadoctorhelpmysorethroatclearupmorequickly
+show couldgoingtoseeadoctorhelpmycoughgetbetter
+show howcanitellwhenineedtocontactmydoctor-rn
+show whenshouldmyrunnystuffynoseclearup
+show whatiscausingmyrunnystuffynose
+show howcanitellwhenineedtocontactmydoctor-st
+show whenshouldmysorethroatclearup
+show whatiscausingmysorethroat
+show tonsillitis
+show glandularfever
+show bronchitis
+show emphysemaandchronicbronchitis
+show whatiscausingmycough
+show howlongwillmycoughlast
+show howcanitellwhenineedtocontactmydoctor
+show tuberculosis
+show lungrelatedproblems
+
+#interactions changed into links (FAQ page):
+show pFAQ1_Q1_1
+show pFAQ1_Q1_2
+show pFAQ1_Q1_3
+show pFAQ1_Q1_4
+show pFAQ1_Q1_5
+show pFAQ1_Q1_6
+show pFAQ1_M1_1
+show pFAQ1_M1_2
+show pFAQ1_M1_3
+show pFAQ1_M1_4
+show pFAQ1_M1_6
+show pFAQ1_M1_7
+
+#interactions changed into links (Treatment Options page):
+show pT1advice1EaseSymptoms
+show pT1advice2AskChemist
+show pT1advice3FightInfection
+
+show st_pT1advice1EaseSymptoms
+show st_pT1advice2askChemist
+
+show rn_pT1advice1EaseSymptoms
+show rn_pT1advice2askChemist
+
+show fv_pT1advice1EasySymptoms
+show fv_pT1advice2askChemist
+
+show studydetails
+
+show userfeedback
+show feedbackthanks

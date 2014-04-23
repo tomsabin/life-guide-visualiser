@@ -1,0 +1,413 @@
+show pW1
+show meetteam
+show reference
+set age to 35
+
+show Doctors_Qs
+
+show men_other_symptoms if (Doctors_Qs.men_headache = "men_yes")
+
+show Safety_Qs_men if (and (Doctors_Qs.men_headache = "men_yes", men_other_symptoms.men = "men_yes"))
+
+show sept_Qs if (or(...
+	(men_other_symptoms.men = "men_no"),...
+	(Doctors_Qs.men_headache = "men_no")...
+)) 
+
+show sept_other_symptoms if (sept_Qs.sept_extremely_ill = "sept_yes")
+
+show Safety_Qs_sept if (and (sept_Qs.sept_extremely_ill = "sept_yes", sept_other_symptoms.sept = "sept_yes"))
+show Safety_Qs_fine if (or(...
+(sept_other_symptoms.sept = "sept_no"),...
+(sept_Qs.sept_extremely_ill = "sept_no")...
+))
+
+after Safety_Qs_fine if (Safety_Qs_fine.d_q_symptom = "cough") goto cough
+after Safety_Qs_fine if (Safety_Qs_fine.d_q_symptom = "sore_throat") goto sore_throat
+after Safety_Qs_fine if (Safety_Qs_fine.d_q_symptom = "runny_nose") goto runny_nose
+after Safety_Qs_fine if (Safety_Qs_fine.d_q_symptom = "fever") goto fever
+
+show Doctors_Qs_select_symptom
+after Doctors_Qs_select_symptom if (Doctors_Qs_select_symptom.d_q_symptom = "cough") goto cough
+after Doctors_Qs_select_symptom if (Doctors_Qs_select_symptom.d_q_symptom = "sore_throat") goto sore_throat
+after Doctors_Qs_select_symptom if (Doctors_Qs_select_symptom.d_q_symptom = "runny_nose") goto runny_nose
+after Doctors_Qs_select_symptom if (Doctors_Qs_select_symptom.d_q_symptom = "fever") goto fever
+
+show Treatment_Options
+after Treatment_Options if (Treatment_Options.t_o_symptom = "cough") goto pT1
+after Treatment_Options if (Treatment_Options.t_o_symptom = "sore_throat") goto st_pT1
+after Treatment_Options if (Treatment_Options.t_o_symptom = "runny_nose") goto rn_pT1
+after Treatment_Options if (Treatment_Options.t_o_symptom = "fever") goto fv_pT1
+
+begin section cough
+
+show pD1 if (or (Safety_Qs_fine.d_q_symptom = "cough", Doctors_Qs_select_symptom.d_q_symptom = "cough"))
+show pD2 if (or (Safety_Qs_fine.d_q_symptom = "cough", Doctors_Qs_select_symptom.d_q_symptom = "cough"))
+show pD3 if (or (Safety_Qs_fine.d_q_symptom = "cough", Doctors_Qs_select_symptom.d_q_symptom = "cough"))
+
+show pA1a if (	||(	 ...
+	(pD3.pD3_Q1 = "pD3_Q1_1"), ...
+	(pD3.pD3_Q2 = "pD3_Q2_1"), ...
+	(pD3.pD3_Q3 = "pD3_Q3_1"), ...
+	(pD3.pD3_Q4 = "pD3_Q4_1") ...
+	))
+	
+
+show pA1a.selected1 if (pD3.pD3_Q1 = "pD3_Q1_1")
+show pA1a.selected2 if (pD3.pD3_Q2 = "pD3_Q2_1")
+show pA1a.selected3 if (pD3.pD3_Q3 = "pD3_Q3_1")
+show pA1a.selected4 if (pD3.pD3_Q4 = "pD3_Q4_1")
+
+set condition1 to ...
+		&&(...
+			(pD1.pD1_Q2 = "pD1_Q2_3"),...
+			||( ...
+				(pD1.pD1_Q3 = "pD1_Q3_2"),...
+				(pD1.pD1_Q3 = "pD1_Q3_3")...
+			)...
+		)
+		
+set condition2 to ...
+		&&(...
+			(pD1.pD1_Q2 = "pD1_Q2_2"), ...
+			(pD1.pD1_Q3 = "pD1_Q3_3")...
+		) 
+
+set condition3 to (pD1.pD1_Q5 = "pD1_Q5_1")
+
+set condition4 to (pD1.pD1_Q6 = "pD1_Q6_1")
+
+set condition5 to (pD2.pD2_Q8 = "pD2_Q8_1")
+
+set condition6 to ...
+		&&(...
+			(age >= 65), ...
+			||(...
+				&&(...
+					||(...
+						(pD2.pD2_Q1 = "pD2_Q1_1"), ...
+						(pD2.pD2_Q2 = "pD2_Q2_1"), ...
+						(pD2.pD2_Q3 = "pD2_Q3_1"), ...
+						(pD2.pD2_Q4 = "pD2_Q4_1")  ...
+					),...
+					(pD2.pD2_Q5 = "pD2_Q5_1")...
+				), ...
+				&& (...
+					|| (...
+						(pD2.pD2_Q1 = "pD2_Q1_1"), ...
+						(pD2.pD2_Q2 = "pD2_Q2_1"), ...
+						(pD2.pD2_Q3 = "pD2_Q3_1"), ...
+						(pD2.pD2_Q4 = "pD2_Q4_1")  ...
+					), ...
+					(pD2.pD2_Q6 = "pD2_Q6_1")...
+				), ...
+				&& (...
+					(pD2.pD2_Q5 = "pD2_Q5_1"), ...
+					(pD2.pD2_Q6 = "pD2_Q6_1")  ...
+				) ...
+			) ...
+		)
+
+set condition7 to ...
+		&&(...
+			(age >=80),...
+			|| (...
+				(pD2.pD2_Q1 = "pD2_Q1_1"), ...
+				(pD2.pD2_Q2 = "pD2_Q2_1"), ...
+				(pD2.pD2_Q3 = "pD2_Q3_1"), ...
+				(pD2.pD2_Q4 = "pD2_Q4_1"), ...
+				(pD2.pD2_Q5 = "pD2_Q5_1"), ...
+				(pD2.pD2_Q6 = "pD2_Q6_1"), ...
+				(pD2.pD2_Q7 = "pD2_Q7_1")  ...
+			)...
+		)...
+		
+show pA1b if ...
+(...
+	||(condition1, condition2, condition3, condition4, condition5, condition6, condition7)...
+)	
+
+show pA1b.selected1 if (condition1)
+show pA1b.selected2 if (condition2)
+show pA1b.selected3 if (condition3)
+show pA1b.selected4 if (condition4)
+show pA1b.selected5 if (condition5)
+show pA1b.selected6 if (||(condition6, condition7))
+
+show pA1c if (not (&&(condition1, condition2, condition3, condition4, condition5, condition6, condition7)))
+
+set coughlink to "?renderpage=whatiscausingmycough?t=["
+if (pD1.pD1_Q1 contains (multiple("pD1_Q1_1"))) set coughlink to append(coughlink, "ticklyCough:'ticklyCough',")
+if ( || (pD1.pD1_Q1 contains (multiple("pD1_Q1_2")), pD1.pD1_Q1 contains(multiple("pD1_Q1_3")), pD1.pD1_Q1 contains(multiple("pD1_Q1_5")), pD1.pD1_Q1 contains(multiple("pD1_Q1_6")))) set coughlink to append(coughlink, "chestyCough:'chestyCough',")
+if (pD1.pD1_Q1 contains (multiple("pD1_Q1_4"))) set coughlink to append(coughlink, "feelPainCough:'feelPainCough',")
+if (1=1) set coughlink to append(coughlink, "]")
+
+show pA1c.advice1 if (pD1.pD1_Q4 = "pD1_Q4_1")
+
+show pA1c.smoking if (pD1.pD1_Q7 = "pD1_Q7_1")
+
+show pA1c.warning if ( ...
+	||(...
+		(pD2.pD2_Q1 = "pD2_Q1_1"), ...
+		(pD2.pD2_Q2 = "pD2_Q2_1"), ...
+		(pD2.pD2_Q3 = "pD2_Q3_1"), ...
+		(pD2.pD2_Q4 = "pD2_Q4_1"), ...
+		(pD2.pD2_Q5 = "pD2_Q5_1"), ...
+		(pD2.pD2_Q6 = "pD2_Q6_1")  ...
+	)...
+)
+
+show pA1c2
+end section
+show pT1
+
+begin section sore_throat
+
+show st_pD1 if (or (Safety_Qs_fine.d_q_symptom = "sore_throat", Doctors_Qs_select_symptom.d_q_symptom = "sore_throat"))
+show st_pD3 if (or (Safety_Qs_fine.d_q_symptom = "sore_throat", Doctors_Qs_select_symptom.d_q_symptom = "sore_throat"))
+
+show st_pA1a if (	||(	 ...
+	(st_pD3.st_pD3_Q1 = "st_pD3_Q1_1"), ...
+	(st_pD3.st_pD3_Q3 = "st_pD3_Q3_1"), ...
+	(st_pD1.st_pD1_Q3 = "st_pD1_Q3_3") ...
+))
+
+show st_pA1a.selected1 if (st_pD3.st_pD3_Q1 = "st_pD3_Q1_1")
+show st_pA1a.selected3 if (st_pD3.st_pD3_Q3 = "st_pD3_Q3_1")
+show st_pA1a.selected4 if (st_pD1.st_pD1_Q3 = "st_pD1_Q3_3")
+
+set st_condition1 to ...
+		&&(...
+			(st_pD1.st_pD1_Q1 = "st_pD1_Q1_2"),...
+			||( ...
+				(st_pD1.st_pD1_Q2 = "st_pD1_Q2_2"),...
+				(st_pD1.st_pD1_Q2 = "st_pD1_Q2_3")...
+			)...
+		)
+		
+set st_condition2 to (st_pD1.st_pD1_Q3 = "st_pD1_Q3_2")
+
+set st_condition3 to (st_pD1.st_pD1_Q5 = "st_pD1_Q5_1")
+
+show st_pA1b if ...
+(...
+	||(st_condition1, st_condition2, st_condition3)...
+)	
+
+show st_pA1b.selected1 if (st_condition1)
+show st_pA1b.selected2 if (st_condition2)
+show st_pA1b.selected3 if (st_condition3)
+
+show st_pA1c if (not (&&(st_condition1, st_condition2, st_condition3)))
+
+show st_pA1c.advice1 if (st_pD1.st_pD1_Q4 = "st_pD1_Q4_1") 
+
+show st_pA1c.warning if (st_pD1.st_pD1_Q6 = "st_pD1_Q6_1")
+
+show st_pA1c2	
+end section
+
+show st_pT1
+
+begin section runny_nose
+show rn_pD1 if ( or (Safety_Qs_fine.d_q_symptom = "runny_nose", Doctors_Qs_select_symptom.d_q_symptom = "runny_nose" ))
+
+show rn_pA1a if (rn_pD1.rn_pD1_Q8 = "rn_pD1_Q8_1")
+
+show rn_pA1a.selected1 if (rn_pD1.rn_pD1_Q8 = "rn_pD1_Q8_1")
+
+set rn_condition1 to ...
+		&&(...
+			(rn_pD1.rn_pD1_Q1 = "rn_pD1_Q1_2"),...
+			||( ...
+				(rn_pD1.rn_pD1_Q2 = "rn_pD1_Q2_2"),...
+				(rn_pD1.rn_pD1_Q2 = "rn_pD1_Q2_3")...
+			)...
+		)
+		
+set rn_condition2 to (rn_pD1.rn_pD1_Q12 = "rn_pD1_Q12_1")
+
+set rn_condition3 to (rn_pD1.rn_pD1_Q10 = "rn_pD1_Q10_1")
+
+set rn_condition4 to ...
+		&&(...
+			(rn_pD1.rn_pD1_Q9 = "rn_pD1_Q9_1"),(rn_pD1.rn_pD1_Q5 = "rn_pD1_Q5_1")...
+		)
+		
+show rn_pA1b if ...
+(...
+	||(rn_condition1, rn_condition2, rn_condition3, rn_condition4 )...
+)	
+
+show rn_pA1b.selected1 if (rn_condition1)
+show rn_pA1b.selected2 if (rn_condition2)
+show rn_pA1b.selected3 if (rn_condition3)
+show rn_pA1b.selected4 if (rn_condition4)
+
+show rn_pA1c if (not (&&(rn_condition1, rn_condition2, rn_condition3, rn_condition4)))
+
+set rn_conditionS1 to (rn_pD1.rn_pD1_Q4 = "rn_pD1_Q4_1")
+set rn_conditionS2 to (rn_pD1.rn_pD1_Q5 = "rn_pD1_Q5_1")
+set rn_conditionS3 to (rn_pD1.rn_pD1_Q6 = "rn_pD1_Q6_1")
+
+set sinusitis to ...
+||(...
+	(&& (rn_conditionS1, rn_conditionS2)),...
+	(&& (rn_conditionS1, rn_conditionS3)),...
+	(&& (rn_conditionS2, rn_conditionS2))...
+)
+
+
+set glands to (rn_pD1.rn_pD1_Q7 = "rn_pD1_Q7_1")
+
+show rn_pA1c.advice1 if (&& (sinusitis, glands))
+show rn_pA1c.advice2 if (sinusitis)
+show rn_pA1c.advice22 if (sinusitis)
+show rn_pA1c.advice3 if (not (sinusitis))
+show rn_pA1c.advice4 if (&& ((not (sinusitis)), glands))
+show rn_pA1c.advice5 if (not (sinusitis))
+
+show rn_pA1c.warning if (rn_pD1.rn_pD1_Q11 = "rn_pD1_Q11_1")
+end section
+
+show rn_pT1
+
+begin section fever
+
+show fv_pD1 if (or (Safety_Qs_fine.d_q_symptom = "fever", Doctors_Qs_select_symptom.d_q_symptom = "fever"))
+show fv_pD2 if (or (Safety_Qs_fine.d_q_symptom = "fever", Doctors_Qs_select_symptom.d_q_symptom = "fever"))
+
+show fv_pA1a if (fv_pD2.fv_pD2_Q4 = "fv_pD2_Q4_1")
+
+set over65 to (age>=65)
+set under65 to (age<65)
+
+set fv_tempover37 to ||((fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_2"), ...
+						(fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_3"), ...
+						(fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_4"))
+
+set fv_tempover38 to ||((fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_3"), ...
+						(fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_4"))
+						
+set fv_morethan3ds to (fv_pD1.fv_pD1_Q2 = "fv_pD1_Q2_2")
+
+set fv_vomitingordiarrhoea to (fv_pD1.fv_pD1_Q3 = "fv_pD1_Q3_1")
+
+set fv_sorethroatorcough to (fv_pD1.fv_pD1_Q4 = "fv_pD1_Q4_1")
+
+set fv_medicalprob to (fv_pD2.fv_pD2_Q1="fv_pD2_Q1_1")
+
+set fv_aftertravel to (fv_pD2.fv_pD2_Q2 = "fv_pD2_Q2_1")
+
+set fv_insectoranimalbite to (fv_pD2.fv_pD2_Q3 = "fv_pD2_Q3_1")
+
+set age65tempover37daysmorethan3 to && (over65, fv_tempover37, fv_morethan3ds)
+set tempover38aftertravel to && (fv_tempover38, fv_aftertravel)
+set tempover38vomitingordiarrhoea to && (fv_tempover38, fv_vomitingordiarrhoea)
+set tempover38insectoranimalbite to && (fv_tempover38, fv_insectoranimalbite)
+set under65tempover38morethan3 to && (under65, fv_tempover38, fv_morethan3ds)
+
+show fv_pA1b if ||(age65tempover37daysmorethan3, ...
+	tempover38aftertravel,...
+	tempover38vomitingordiarrhoea, ...
+	tempover38insectoranimalbite, ...
+	under65tempover38morethan3)
+
+show fv_pA1b.selected1 if age65tempover37daysmorethan3
+show fv_pA1b.selected2 if (&&(fv_tempover38, not (age65tempover37daysmorethan3)))
+show fv_pA1b.selected6 if (fv_morethan3ds)
+show fv_pA1b.selected4 if (fv_aftertravel)
+show fv_pA1b.selected5 if (fv_insectoranimalbite)
+show fv_pA1b.selected3 if (fv_vomitingordiarrhoea)
+
+show no_cold_flu_symptoms if (fv_pD1.fv_pD1_Q4 = "fv_pD1_Q4_2") 
+
+show fv_pA1c if (not ( &&(age65tempover37daysmorethan3, ...
+				tempover38aftertravel, ...
+				tempover38vomitingordiarrhoea, ...
+				tempover38insectoranimalbite, ...
+				under65tempover38morethan3)))
+
+show fv_pA1c.advice1 if (fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_1") 
+show fv_pA1c.advice2 if (fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_2") 
+show fv_pA1c.advice3 if (fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_3") 
+show fv_pA1c.advice4 if (fv_pD1.fv_pD1_Q1 = "fv_pD1_Q1_4") 
+
+show fv_pA1c.warning if (fv_pD2.fv_pD2_Q1 = "fv_pD2_Q1_1")
+ 
+show fv_pA1c5
+end section
+
+show fv_pT1
+
+show pFAQ1
+
+show howdoyouknowfever 
+
+show Video_glands
+
+show Video_men_sept
+
+show Video_sinusitis
+
+show pl
+
+show whatiscausingmyfever
+show howcanitellwhenineedtocontactmydoctor-fv
+show wouldantibioticshelp-fv
+show pneumonia
+show meningitis
+show howlongwillmyfeverlast
+show couldgoingtoseeadoctorhelpmyfevergetbetter
+show couldmysymptomsbepartlyduetoanallergy
+show heartrelatedproblems
+show wouldantibioticshelp
+show couldgoingtoseeacoctorhelpmyrunnystuffynoseclearupmorequickly
+show couldgoingtoseeadoctorhelpmysorethroatclearupmorequickly
+show couldgoingtoseeadoctorhelpmycoughgetbetter
+show howcanitellwhenineedtocontactmydoctor-rn
+show whenshouldmyrunnystuffynoseclearup
+show whatiscausingmyrunnystuffynose
+show howcanitellwhenineedtocontactmydoctor-st
+show whenshouldmysorethroatclearup
+show whatiscausingmysorethroat
+show tonsillitis
+show glandularfever
+show bronchitis
+show emphysemaandchronicbronchitis
+show whatiscausingmycough
+show howlongwillmycoughlast
+show howcanitellwhenineedtocontactmydoctor
+show tuberculosis
+show lungrelatedproblems
+
+show pFAQ1_Q1_1
+show pFAQ1_Q1_2
+show pFAQ1_Q1_3
+show pFAQ1_Q1_4
+show pFAQ1_Q1_5
+show pFAQ1_Q1_6
+show pFAQ1_M1_1
+show pFAQ1_M1_2
+show pFAQ1_M1_3
+show pFAQ1_M1_4
+show pFAQ1_M1_6
+show pFAQ1_M1_7
+
+show pT1advice1EaseSymptoms
+show pT1advice2AskChemist
+show pT1advice3FightInfection
+
+show st_pT1advice1EaseSymptoms
+show st_pT1advice2askChemist
+
+show rn_pT1advice1EaseSymptoms
+show rn_pT1advice2askChemist
+
+show fv_pT1advice1EasySymptoms
+show fv_pT1advice2askChemist
+
+show studydetails
+
+show userfeedback
+show feedbackthanks

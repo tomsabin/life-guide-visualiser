@@ -1,0 +1,314 @@
+show a_intro1 #if (or (hasseen (username, "a_random_web"), hasseen (username, "a_random_nurse")))
+show a_intro2
+show a_intro3
+show b_emollients0
+show b_emollients01
+show b_emollients02
+show b_emollients03
+show b_emollients1
+show b_emollients1_mainmenu #jwz#if (hasseen (username, "b_emollients04", "true"))
+show b_emollients2a
+show b_emollients2b
+show b_emollients3
+show b_emollients4
+show b_emollients5
+show b_emollients6
+show b_emollients7
+show b_emollients8
+show b_emollients9
+show b_emollients91
+show b_emollients911
+show b_emollients912
+
+show b_emollients92
+
+
+show b_emollients921
+
+#should be a week in seconds
+
+show b_emollients93
+
+#saveandload b_emollients93 for username
+show b_popup_concern1
+show b_popup_concern2
+show b_popup_concern3
+show b_popup_concern4
+show b_popup_concern5
+show b_print_chart_1
+show b_print_chart_2
+show b_print_chart_3
+show b_print_chart_4
+show b_print_chart_5
+show b_summary_of_emollient_unit
+show c_2welcome2 
+
+show c_meettheteam_mainmenu
+
+
+show b_emollient0_mainmenu
+show b_emollients01_mainmenu
+show b_emollients02_mainmenu
+show b_emollients03_mainmenu
+show b_emollients04_mainmenu
+
+
+
+show d_topicalsteroids1
+show d_topicalsteroids2
+show d_topicalsteroids3
+show d_topicalsteroids4
+show d_topicalsteroids5
+show d_topicalsteroids6
+show d_topicalsteroids7
+show d_topicalsteroids8
+show d_topicalsteroids9
+show d_topicalsteroids91
+show d_topicalsteroids911
+show d_topicalsteroids92
+show d_topicalsteroids93
+show d_topicalsteroids931
+show d_topicalsteroids94
+
+#saveandload d_topicalsteroids94 for username
+show e_dietandallegy1
+show e_dietandallergy2
+show e_dietandallergy3
+show e_dietandallergy4
+show e_dietandallergy5
+show e_dietandallergy6
+show e_dietandallergy7
+show e_dietandallergy8
+show e_dietandallergy9
+show e_dietandallergy91
+show e_dietandallergy92
+show e_dietandallergy93
+show e_dietandallergy94
+
+#saveandload e_dietandallergy94 for username
+show f_bathtime0
+show f_bathtime11
+show f_bathtime3
+show f_bathtime4
+show f_bathtime6
+show f_bathtime61
+show f_bathtime7
+
+#saveandload f_bathtime7 for username
+show g_laundry0
+show g_laundry1
+show g_laundry2
+show g_laundry3
+show g_laundry4
+
+#saveandload g_laundry4 for username
+show h_sleep1
+show h_sleep2
+show h_sleep3
+show h_sleep4
+show h_sleep5
+show h_sleep6
+show h_sleep7
+show h_sleep8
+show h_sleep9
+show h_sleep91
+show h_sleep92
+show h_sleep93
+
+#saveandload h_sleep93 for username
+show i_gp1
+show i_gp2
+show i_gp3
+show i_gp4
+show i_gp5
+show i_gp6
+show i_gp7
+show i_gp81
+show i_gp9
+show i_gp91
+show i_gp92
+show i_gp93
+show i_gp931
+show i_gp94
+
+#saveandload i_gp94 for username
+show i_GP_consult_sheet
+show j_stress1
+show j_stress2
+show j_stress3
+show j_stress4
+show j_stress5
+show j_stress6
+show j_stress7
+show j_stress8
+show j_stress9
+show j_stress91
+show j_stress92
+show j_stress93
+show j_stress94
+show j_stress95
+
+#saveandload j_stress95 for username
+show j_stress_thoughtdiary
+show k_scratching0
+show k_scratching1
+show k_scratching2
+show k_scratching3
+show k_scratching4
+show k_scratching5
+
+#saveandload k_scratching5 for username
+show l_animal_reward
+show l_fairy_reward
+show l_mrmen_reward
+show l_resistance0
+show l_resistance01
+show l_resistance2
+show l_resistance4
+show l_resistance401
+show l_resistance41
+show l_resistance5
+show l_resistance6
+
+#saveandload l_resistance6 for username
+show m_winter1
+show m_winter2
+show m_winter3
+show m_winter4
+show m_winter5
+show m_winter6
+
+#saveandload m_winter6 for username
+show no_summerhol1
+show no_summerhol2
+show no_summerhol3
+show no_summerhol4
+show no_summerhol5
+show no_summerhol6
+show no_summerhol7
+show no_summerhol8
+
+#saveandload no_summerhol8 for username
+show o_infections1
+show o_infections2
+show o_infections3
+show o_infections4
+show o_infections5
+show o_infections6
+show o_infections7
+show o_infections8
+show o_infections9
+show o_infections91
+
+#saveandload o_infections91 for username
+show p_swimming1
+show p_swimming2
+show p_swimming3
+show p_swimming4
+
+#saveandload p_swimming4 for username
+show q_school1
+show q_school2
+show q_school3
+show q_school4
+show q_school5
+show q_school6
+show q_school7
+show q_school8
+show q_school81
+show q_school9
+
+#saveandload q_school9 for username
+show q_school_info_sheet
+show q_school_info_sheet_2
+show video_1
+show video_2
+show video_3
+show video_4
+show video_5
+show r_pictures1
+show r_pictures2
+show r_pictures3
+show r_pictures4
+show r_pictures5
+show r_pictures6
+show r_pictures7
+show r_pictures8
+show s_videos1
+show s_printsheets
+
+#after a_homepage31 if (and ( or( loadvalue (username, "group") = "web", loadvalue (username, "group") = "nurse"),...
+ #                            hasseen (username, "b_emollients1"), not(hasseen(username, "b_emollients93"))  )...
+	
+#					)goto b_emollients1				
+
+#show z_fu_1_webcomplete_maincarer if ( or( loadvalue (username, "group") = "web", loadvalue (username, "group") = "nurse"))
+#savevalue(username,"z_fu1","done")
+#show z_fu_11_websat if (and ( or( loadvalue (username, "group") = "web", loadvalue (username, "group") = "nurse")))
+#savevalue(username,"z_fu11","done")
+#show z_fu_2_DFIQ
+#savevalue(username,"z_fu2","done")
+
+
+
+
+#show z_fu_3_CDLQI if (or( loadvalue(username,"childyr") = 4, loadvalue(username,"childyr") = 5))
+#savevalue(username,"z_fu31or3","z_fu31I")
+#show z_fu_31_IDQOL  if (or( loadvalue(username,"childyr") = 0, loadvalue(username,"childyr") = 1, loadvalue(username,"childyr") = 2, loadvalue(username,"childyr") = 3))
+#savevalue(username,"z_fu31or3","z_fu31C")
+#show z_fu_4_POEM 
+#savevalue(username,"z_fu4","done")
+#show z_fu_5_global_impact_severity
+#savevalue(username,"z_fu5","done")
+#show z_fu_6_EQ5D
+#savevalue(username,"z_fu6","done")
+#show z_fu_7_CHU9
+#savevalue(username,"z_fu7","done")
+#show z_fu_8_PETS if ( or( loadvalue (username, "group") = "web", loadvalue (username, "group") = "nurse"))
+#savevalue(username,"z_fu8","done")
+#show z_fu_9_emollient_use
+#savevalue(username,"z_fu9","done")
+#show z_fu_91_PEI if ( or( loadvalue (username, "group") = "web", loadvalue (username, "group") = "nurse"))
+#savevalue(username,"z_fu91","done")
+#show z_fu_92_demographics
+#savevalue(username,"z_fu92","done")
+
+#cancelemail( append(username,"3mr1_usualcare"), username) if (group = "usualcare")
+#cancelemail( append(username,"3mr2_usualcare"), username) if (group = "usualcare")
+#cancelemail( append(username,"3mr1_web"), username) if (group = "web")
+#cancelemail( append(username,"3mr2_web"), username) if (group = "web")
+#cancelemail( append(username,"3mr1_nurse"), username) if (group = "nurse")
+#cancelemail( append(username,"3mr2_nurse"), username) if (group = "nurse")
+
+#show z_fu_93_treatments_diet
+#savevalue(username,"z_fu93","done")
+#sendemail( append(username,"fu_complete_usualcare"), study_email, subjectfu1, append(bodyfu1, loadvalue(username,"studyID"), bodyuc2, loadvalue(username,"studyID"), "\n\nusername: ",username, "\n\nStudy Group: Usual care" ), 60 ) if (group = "usualcare")
+#sendemail( append(username,"fu_complete_web"), study_email, subjectfu1, append(bodyfu1, loadvalue(username,"studyID"), bodyuc2, loadvalue(username,"studyID"), "\n\nusername: ",username, "\n\nStudy Group: Web" ), 60 )if (group = "web")
+#sendemail( append(username,"fu_complete_nurse"), study_email, subjectfu1, append(bodyfu1, loadvalue(username,"studyID"), bodyuc2, loadvalue(username,"studyID"), "\n\nusername: ",username, "\n\nStudy Group: Nurse" ), 60 ) if (group = "nurse")
+
+#cancelemail( append (username, "fu_notcomplete_usualcare"), username) if (group = "usualcare")
+#cancelemail( append (username, "fu_notcomplete_web"), username) if (group = "web")
+#cancelemail( append (username, "fu_notcomplete_nurse"), username) if (group = "nurse")
+#show z_fu_94_thankyou
+
+
+
+
+
+#GP pages
+show c_3welcome_GP
+show t_HCP1
+show t_HCP2
+show t_HCP3
+show T_HCP4
+show T_hcp5
+show T_HCP6
+show u_NICE1
+show u_NICE2
+show u_NICE3
+show u_NICE4
+show u_NICE5
+show u_NICE6
+show u_NICE7
+show u_NICE8
+show u_NICE9

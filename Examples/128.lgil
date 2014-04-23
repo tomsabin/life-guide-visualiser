@@ -1,0 +1,128 @@
+#show login
+show s1pg01
+show s1pg02
+show s1pg03fyc
+show s1pg04fyc
+show s1pg05
+show s1pg06
+show s1pg07
+show s1pg09
+				  	   
+set default s1pg09.hwsneez2 to s1pg07.hwsneez1
+set default s1pg09.hwmeal2 to s1pg07.hwmeal1
+set default s1pg09.hwsnack2 to s1pg07.hwsnack1
+set default s1pg09.hwtoil2 to s1pg07.hwtoil1
+set default s1pg09.hwhouse2 to s1pg07.hwhouse1
+set default s1pg09.hwclose2 to s1pg07.hwclose1
+
+#set warning to or( and ( s1pg09.hwmeal2 < 4 , s1pg09.hwmeal2 <= s1pg07.hwmeal1 ) , ...
+#					and ( s1pg09.hwsnack2 < 4 , s1pg09.hwsnack2 <= s1pg07.hwsnack1 ) , ...
+#					and ( s1pg09.hwtoil2 < 4 , s1pg09.hwtoil2 <= s1pg07.hwtoil1 ) , ...
+#					and ( s1pg09.hwhouse2 < 4 , s1pg09.hwhouse2 <= s1pg07.hwhouse1 ) , ...
+#					and ( s1pg09.hwclose2 < 4 , s1pg09.hwclose2 <= s1pg07.hwclose1 ) , ...
+#					and ( s1pg09.hwsneez2 < 4 , s1pg09.hwsneez2 <= s1pg07.hwsneez1 ) )
+					
+set warning to and ( or (s1pg09.hwmeal2 < 4 ,s1pg09.hwsnack2 < 4 ,s1pg09.hwtoil2 < 4 , s1pg09.hwhouse2 < 4 ,s1pg09.hwclose2 < 4 ,s1pg09.hwsneez2 < 4), ...
+					 and ( s1pg09.hwmeal2 <= s1pg07.hwmeal1, s1pg09.hwsnack2 <= s1pg07.hwsnack1, s1pg09.hwtoil2 <= s1pg07.hwtoil1 , s1pg09.hwhouse2 <= s1pg07.hwhouse1 , s1pg09.hwclose2 <= s1pg07.hwclose1, s1pg09.hwsneez2 <= s1pg07.hwsneez1) ...
+					)
+
+show s1pg09afyc if (warning)
+show s1pg09bfyc if (not(warning))
+show s1pg10
+show s2menu
+
+#session 2
+show sess2
+show s2pg02
+show s2pg02a
+show s2pg03
+show s2pg03a
+show tunder1
+show s1pg08a
+show teff1
+
+#session 3
+show Sess3
+show s3pg02
+show s3pg02a
+show s3pg03
+show s3pg04
+show tunder2
+show tnec2
+show teff2a
+show teff2b
+
+#session 4
+show sess4
+show s4pg02
+show s4pg03
+show s4pg04
+show s4pg04b
+show teff3
+show tadh2fyc
+
+#flu information
+show s2flu
+show s2flu1
+show s2flu2fyc
+show s2flu3fyc
+show s2flu4a
+
+#about the website
+show s2about
+show s2about1
+show s2about2
+show s2about3
+
+#links and downloads
+show s2linkfyc
+
+#optional pages
+show s1pg01paul
+show s1pg04afyc
+show s1pg10a
+show exit
+
+if ( or ( s1pg09.hwmeal2 = 1)) set meal to "ALMOST NEVER"
+else if ( or ( s1pg09.hwmeal2 = 2)) set meal to "SOMETIMES"
+else if ( or ( s1pg09.hwmeal2 = 3)) set meal to "QUITE OFTEN"
+else if ( or ( s1pg09.hwmeal2 = 4)) set meal to "VERY OFTEN"
+else if ( or ( s1pg09.hwmeal2 = 5)) set meal to "ALMOST ALWAYS"
+
+if ( or ( s1pg09.hwsnack2 = 1)) set snack to "ALMOST NEVER"
+else if ( or ( s1pg09.hwsnack2 = 2)) set snack to "SOMETIMES"
+else if ( or ( s1pg09.hwsnack2 = 3)) set snack to "QUITE OFTEN"
+else if ( or ( s1pg09.hwsnack2 = 4)) set snack to "VERY OFTEN"
+else if ( or ( s1pg09.hwsnack2 = 5)) set snack to "ALMOST ALWAYS"
+
+if ( or ( s1pg09.hwtoil2 = 1)) set toilet to "ALMOST NEVER"
+else if ( or ( s1pg09.hwtoil2 = 2)) set toilet to "SOMETIMES"
+else if ( or ( s1pg09.hwtoil2 = 3)) set toilet to "QUITE OFTEN"
+else if ( or ( s1pg09.hwtoil2 = 4)) set toilet to "VERY OFTEN"
+else if ( or ( s1pg09.hwtoil2 = 5)) set toilet to "ALMOST ALWAYS"
+
+if ( or ( s1pg09.hwhouse2 = 1)) set house to "ALMOST NEVER"
+else if ( or ( s1pg09.hwhouse2 = 2)) set house to "SOMETIMES"
+else if ( or ( s1pg09.hwhouse2 = 3)) set house to "QUITE OFTEN"
+else if ( or ( s1pg09.hwhouse2 = 4)) set house to "VERY OFTEN"
+else if ( or ( s1pg09.hwhouse2 = 5)) set house to "ALMOST ALWAYS"
+
+if ( or ( s1pg09.hwclose2 = 1)) set close to "ALMOST NEVER"
+else if ( or ( s1pg09.hwclose2 = 2)) set close to "SOMETIMES"
+else if ( or ( s1pg09.hwclose2 = 3)) set close to "QUITE OFTEN"
+else if ( or ( s1pg09.hwclose2 = 4)) set close to "VERY OFTEN"
+else if ( or ( s1pg09.hwclose2 = 5)) set close to "ALMOST ALWAYS"
+
+if ( or ( s1pg09.hwsneez2 = 1)) set sneeze to "ALMOST NEVER"
+else if ( or ( s1pg09.hwsneez2 = 2)) set sneeze to "SOMETIMES"
+else if ( or ( s1pg09.hwsneez2 = 3)) set sneeze to "QUITE OFTEN"
+else if ( or ( s1pg09.hwsneez2 = 4)) set sneeze to "VERY OFTEN"
+else if ( or ( s1pg09.hwsneez2 = 5)) set sneeze to "ALMOST ALWAYS"
+
+
+set s1pg10a.meal to meal
+set s1pg10a.snack to snack
+set s1pg10a.toilet to toilet
+set s1pg10a.house to house
+set s1pg10a.close to close
+set s1pg10a.sneeze to sneeze
